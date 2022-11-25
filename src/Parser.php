@@ -45,25 +45,25 @@ use function count;
 use function explode;
 use function ltrim;
 use function Safe\preg_match;
-use function Safe\substr;
+use function str_contains;
+use function str_starts_with;
 use function trim;
 use const PHP_EOL;
 
 final class Parser
 {
     /**
-     * @return array<string[]|string[][]>
+     * @return array<string[][]>
      */
     public static function parse(string $makeFileContents): array
     {
         $targets = [];
-
         $multiline = false;
-        $target = null;
 
         foreach (explode(PHP_EOL, $makeFileContents) as $line) {
             if (str_starts_with($line, "\t")
-                || 1 === preg_match('/^\S+=.+$/u', $line)) {
+                || 1 === preg_match('/^\S+=.+$/u', $line)
+            ) {
                 continue;
             }
 
@@ -77,7 +77,7 @@ final class Parser
                 continue;
             }
 
-            $multiline = '\\' === substr($line, -1);
+            $multiline = '\\' === mb_substr($line, -1);
 
             if (false === $previousMultiline) {
                 $targetParts = explode(':', $line);

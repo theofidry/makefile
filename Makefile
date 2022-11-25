@@ -2,23 +2,28 @@
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-# General variables
-TOUCH = bash .makefile/touch.sh
-
 # PHP variables
 COMPOSER = $(shell which composer)
+
+SRC_TESTS_FILES=$(shell find src/ tests/ -type f) phpunit.xml.dist
 COVERAGE_DIR = dist/coverage
-COVERS_VALIDATOR_BIN = vendor-bin/covers-validator/vendor/ockcyp/covers-validator/covers-validator
-COVERS_VALIDATOR = $(COVERS_VALIDATOR_BIN)
+COVERAGE_XML = $(COVERAGE_DIR)/xml
+COVERAGE_HTML = $(COVERAGE_DIR)/html
+TARGET_MSI = 100
+
 INFECTION_BIN = vendor/bin/infection
-INFECTION = php -d zend.enable_gc=0 $(INFECTION_BIN) --skip-initial-tests --coverage=$(COVERAGE_DIR) --only-covered --show-mutations --min-msi=100 --min-covered-msi=100 --ansi --threads=$(shell nproc || sysctl -n hw.ncpu || 1)
+INFECTION = php -d zend.enable_gc=0 $(INFECTION_BIN) --skip-initial-tests --coverage=$(COVERAGE_DIR) --only-covered --show-mutations --min-msi=100 --min-covered-msi=100 --ansi
+
 PHPUNIT_BIN = vendor/bin/phpunit
 PHPUNIT = php -d zend.enable_gc=0 $(PHPUNIT_BIN)
+PHPUNIT_COVERAGE_INFECTION = XDEBUG_MODE=coverage $(PHPUNIT) --coverage-xml=$(COVERAGE_DIR)/coverage-xml --log-junit=$(COVERAGE_DIR)/phpunit.junit.xml
+PHPUNIT_COVERAGE_HTML = XDEBUG_MODE=coverage $(PHPUNIT) --coverage-html=$(COVERAGE_HTML)
 PHPUNIT_COVERAGE = XDEBUG_MODE=coverage $(PHPUNIT) --coverage-xml=$(COVERAGE_DIR)/coverage-xml --log-junit=$(COVERAGE_DIR)/phpunit.junit.xml
+
 PSALM_BIN = vendor-bin/psalm/vendor/vimeo/psalm/psalm
 PSALM = $(PSALM_BIN) --no-cache
+
 PHP_CS_FIXER_BIN = vendor-bin/php-cs-fixer/vendor/friendsofphp/php-cs-fixer/php-cs-fixer
-# To keep in sync with the command defined in the parent Makefile
 PHP_CS_FIXER = $(PHP_CS_FIXER_BIN) fix --ansi --verbose --config=.php-cs-fixer.php
 
 
@@ -40,14 +45,31 @@ help:
 default: ## Runs the default task: CS fix and all the tests
 default: cs test
 
+.PHONY: cs
+cs: ## Fixes CS
+cs: $(PHP_CS_FIXER_BIN)
+	$(PHP_CS_FIXER)
 
 .PHONY: cs
-cs: ## Runs PHP-CS-Fixer
-cs: $(PHP_CS_FIXER_BIN)
-ifndef SKIP_CS
-	$(PHP_CS_FIXER)
-endif
+cs_lint: ## Lints CS
+cs_lint: php_cs_fixer_lint
 
+.PHONY: gitignore_sort
+gitignore_sort:
+gitignore_sort:
+	LC_ALL=C sort -u .gitignore -o .gitignore
+
+.PHONY: composer_normalize
+composer_normalize: vendor
+	$(COMPOSER) normalize
+
+.PHONY: php_cs_fixer
+php_cs_fixer: $(PHP_CS_FIXER_BIN)
+	$(PHP_CS_FIXER)
+
+.PHONY: php_cs_fixer_lint
+php_cs_fixer_lint: $(PHP_CS_FIXER_BIN)
+	$(PHP_CS_FIXER)
 
 .PHONY: psalm
 psalm: ## Runs Psalm
@@ -56,43 +78,35 @@ ifndef SKIP_PSALM
 	$(PSALM)
 endif
 
-
-.PHONY: infection
-infection: ## Runs infection
-infection: $(INFECTION_BIN) $(COVERAGE_DIR) vendor
-ifndef SKIP_INFECTION
-	if [ -d $(COVERAGE_DIR)/coverage-xml ]; then $(INFECTION); fi
-endif
-
 .PHONY: test
 test: ## Runs all the tests
-test: composer_validate covers_validator psalm coverage infection
-
+test: composer_validate psalm infection
 
 .PHONY: composer_validate
 composer_validate: ## Validates the Composer package
 composer_validate: vendor
 	composer validate --strict
 
-
-.PHONY: covers_validator
-covers_validator: ## Validates the PHPUnit @covers annotations
-covers_validator: $(COVERS_VALIDATOR_BIN) vendor
-ifndef SKIP_COVERS_VALIDATOR
-	$(COVERS_VALIDATOR)
-endif
-
-
 .PHONY: phpunit
 phpunit: ## Runs PHPUnit
 phpunit: $(PHPUNIT_BIN) vendor
 	$(PHPUNIT)
 
+.PHONY: phpunit_coverage_infection
+phpunit_coverage_infection: ## Runs PHPUnit with code coverage for Infection
+phpunit_coverage_infection: $(PHPUNIT_BIN) vendor
+	$(PHPUNIT_COVERAGE_INFECTION)
 
-.PHONY: coverage
-coverage: ## Runs PHPUnit with code coverage
-coverage: $(PHPUNIT_BIN) vendor
-	$(PHPUNIT_COVERAGE)
+.PHONY: phpunit_coverage_html
+phpunit_coverage_html:	    ## Runs PHPUnit with code coverage with HTML report
+phpunit_coverage_html: $(PHPUNIT_BIN) vendor
+	$(PHPUNIT_COVERAGE_HTML)
+	@echo "You can check the report by opening the file \"$(COVERAGE_HTML)/index.html\"."
+
+.PHONY: infection
+infection: ## Runs infection
+infection: $(INFECTION_BIN) $(COVERAGE_DIR) vendor
+	if [ -d $(COVERAGE_DIR)/coverage-xml ]; then $(INFECTION); fi
 
 
 #
@@ -113,7 +127,7 @@ $(PHPUNIT_BIN): vendor
 $(INFECTION_BIN): vendor
 	touch -c $@
 
-$(COVERAGE_DIR): $(PHPUNIT_BIN) src tests phpunit.xml.dist
+$(COVERAGE_DIR): $(PHPUNIT_BIN) $(SRC_TESTS_FILES) phpunit.xml.dist
 	$(PHPUNIT_COVERAGE)
 	touch -c $@
 
