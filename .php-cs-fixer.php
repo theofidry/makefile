@@ -28,5 +28,6 @@ $header = trim(
 ));
 
 $config = new FidryConfig($header, 80_000);
+$config->addRules(['no_trailing_whitespace_in_string' => false]);
 
 return $config->setFinder($finder);

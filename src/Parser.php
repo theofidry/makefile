@@ -62,18 +62,14 @@ final class Parser
 
         foreach (explode(PHP_EOL, $makeFileContents) as $line) {
             if (str_starts_with($line, "\t")
-                || 1 === preg_match('/^\S+=.+$/u', $line)
+                || 1 === preg_match('/\S+=.+/', $line)
             ) {
                 continue;
             }
 
-            $line = trim($line);
-
             $previousMultiline = $multiline;
 
-            if (str_contains($line, ':=')
-                || str_starts_with($line, '#')
-            ) {
+            if (str_starts_with($line, '#')) {
                 continue;
             }
 
@@ -118,11 +114,7 @@ final class Parser
         return array_values(
             array_filter(
                 array_map(
-                    static function (string $dependency) use ($multiline): string {
-                        return trim(
-                            $multiline ? ltrim($dependency, '\\') : $dependency
-                        );
-                    },
+                    static fn (string $dependency) => $multiline ? ltrim($dependency, '\\') : $dependency,
                     explode(' ', $dependencies)
                 )
             )
