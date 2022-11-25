@@ -39,10 +39,9 @@ namespace Fidry\Makefile\Test;
 use Fidry\Makefile\Parser;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
-use Throwable;
 use function current;
-use function Safe\file_get_contents;
 use function implode;
+use function Safe\file_get_contents;
 use function Safe\shell_exec;
 use function Safe\sprintf;
 
@@ -60,19 +59,26 @@ abstract class BaseMakefileTestCase extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        try {
-            static::$parsedMakefile = Parser::parse(
-                file_get_contents(static::getMakefilePath()),
-            );
-        } catch (Throwable $throwable) {
-            // Continue
-            static::$parsedMakefile = null;
-        }
+        static::getParsedMakefile();
     }
 
     public static function tearDownAfterClass(): void
     {
         static::$parsedMakefile = null;
+    }
+
+    /**
+     * @return list<array{string, list<string>}>
+     */
+    final protected static function getParsedMakefile(): array
+    {
+        if (!isset(static::$parsedMakefile)) {
+            static::$parsedMakefile = Parser::parse(
+                file_get_contents(static::getMakefilePath()),
+            );
+        }
+
+        return static::$parsedMakefile;
     }
 
     final public function test_it_has_a_help_command(): void
@@ -96,18 +102,13 @@ abstract class BaseMakefileTestCase extends TestCase
         self::assertSame($expectedOutput, $output);
     }
 
-    final public function test_the_makefile_can_be_parsed(): void
-    {
-        self::assertTrue(isset(static::$parsedMakefile));
-    }
-
     final public function test_phony_targets_are_correctly_declared(): void
     {
         $phony = null;
         $targetComment = false;
         $matchedPhony = true;
 
-        foreach (static::$parsedMakefile as [$target, $dependencies]) {
+        foreach (static::getParsedMakefile() as [$target, $dependencies]) {
             if ('.PHONY' === $target) {
                 self::assertCount(
                     1,
@@ -193,7 +194,7 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         $targetCounts = [];
 
-        foreach (static::$parsedMakefile as [$target, $dependencies]) {
+        foreach (static::getParsedMakefile() as [$target, $dependencies]) {
             if ('.PHONY' === $target) {
                 continue;
             }

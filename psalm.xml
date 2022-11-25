@@ -27,5 +27,10 @@
     </projectFiles>
 
     <issueHandlers>
+        <DeprecatedFunction>
+            <errorLevel type="suppress">
+                <referencedFunction name="Safe\sprintf"/>
+            </errorLevel>
+        </DeprecatedFunction>
     </issueHandlers>
 </psalm>

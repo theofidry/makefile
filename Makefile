@@ -140,9 +140,3 @@ ifndef SKIP_PSALM
 	composer bin psalm install
 	touch -c $@
 endif
-
-$(COVERS_VALIDATOR_BIN): vendor
-ifndef SKIP_COVERS_VALIDATOR
-	composer bin covers_validator install
-	touch -c $@
-endif
