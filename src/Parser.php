@@ -53,7 +53,7 @@ use const PHP_EOL;
 final class Parser
 {
     /**
-     * @return array<string[][]>
+     * @return list<array{string, list<string>}>
      */
     public static function parse(string $makeFileContents): array
     {
@@ -86,6 +86,7 @@ final class Parser
 
                 $dependencies = self::parseDependencies($targetParts[1], $multiline);
             } else {
+                /** @var array{string, list<string>} $lastEntry */
                 $lastEntry = array_pop($targets);
 
                 $target = $lastEntry[0];
@@ -103,7 +104,7 @@ final class Parser
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private static function parseDependencies(string $dependencies, bool $multiline): array
     {

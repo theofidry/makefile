@@ -122,6 +122,20 @@ final class ParserTest extends TestCase
             ],
         ];
 
+        yield 'simple command with multi-line pre-requisites missing the last pre-requisite' => [
+            <<<'MAKEFILE'
+                .PHONY: command
+                command: foo \
+                         bar \
+                         $(DEP)
+                    @echo 'Hello'
+                MAKEFILE,
+            [
+                ['.PHONY', ['command']],
+                ['command', ['foo', 'bar', '$(DEP)']],
+            ],
+        ];
+
         yield 'simple command with multi-line pre-requisites with trailing spaces' => [
             <<<'MAKEFILE'
                 .PHONY: command
@@ -268,6 +282,18 @@ final class ParserTest extends TestCase
             [
                 // TODO: should trim target here
                 ['targets ', ['prerequisites']],
+            ],
+        ];
+
+        yield 'multiple targets and pre-requisites' => [
+            <<<'MAKEFILE'
+                target1 target2 : prerequisite1 prerequisite2
+                    recipe
+                    …
+                MAKEFILE,
+            [
+                // TODO: should trim target here
+                ['target1 target2 ', ['prerequisite1', 'prerequisite2']],
             ],
         ];
 
