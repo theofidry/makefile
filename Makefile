@@ -108,6 +108,7 @@ infection: ## Runs infection
 infection: $(INFECTION_BIN) $(COVERAGE_DIR) vendor
 	if [ -d $(COVERAGE_DIR)/coverage-xml ]; then $(INFECTION); fi
 
+ # hello
 
 #
 # Rules

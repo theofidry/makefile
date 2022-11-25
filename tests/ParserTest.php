@@ -55,21 +55,16 @@ final class ParserTest extends TestCase
         self::assertSame($expected, $actual);
     }
 
-    public function makefileContentProvider(): iterable
+    public static function makefileContentProvider(): iterable
     {
-        yield [
+        yield 'empty' => [
             <<<'MAKEFILE'
-                .PHONY: command
-                command: foo
-                    @echo 'Hello'
+
                 MAKEFILE,
-            [
-                ['.PHONY', ['command']],
-                ['command', ['foo']],
-            ],
+            [],
         ];
 
-        yield [
+        yield 'simple command with multiple pre-requisites' => [
             <<<'MAKEFILE'
                 .PHONY: command
                 command: foo bar $(DEP)
@@ -81,7 +76,25 @@ final class ParserTest extends TestCase
             ],
         ];
 
-        yield [
+        yield 'double command with tabs' => [
+            <<<'MAKEFILE'
+                .PHONY: command1
+                command1:
+                	@echo "hello"
+
+                .PHONY: command2
+                command2:
+                	@echo "world!"
+                MAKEFILE,
+            [
+                ['.PHONY', ['command1']],
+                ['command1', []],
+                ['.PHONY', ['command2']],
+                ['command2', []],
+            ],
+        ];
+
+        yield 'simple command with a help comment' => [
             <<<'MAKEFILE'
                 .PHONY: command
                 command:    ## Comment
@@ -95,7 +108,7 @@ final class ParserTest extends TestCase
             ],
         ];
 
-        yield [
+        yield 'simple command with multi-line pre-requisites' => [
             <<<'MAKEFILE'
                 .PHONY: command
                 command: foo \
@@ -109,17 +122,20 @@ final class ParserTest extends TestCase
             ],
         ];
 
-        yield [
+        yield 'multiple commands' => [
             <<<'MAKEFILE'
                 .PHONY: command1 command2 command3
+
                 .PHONY: command2
                 command2: foo \
                          bar \
                          $(DEP)
                     @echo 'Hello'
+
                 .PHONY: command1
                 command1: foo \
                          bar
+
                 .PHONY: command2
                 command1: foo
                 MAKEFILE,
@@ -134,16 +150,7 @@ final class ParserTest extends TestCase
             ],
         ];
 
-        yield [
-            <<<'MAKEFILE'
-                .DEFAULT_GOAL := help
-                BOX=box
-                FLOCK := flock
-                MAKEFILE,
-            [],
-        ];
-
-        yield [
+        yield 'variables' => [
             <<<'MAKEFILE'
                 .DEFAULT_GOAL := help
                 BOX=box
@@ -153,7 +160,7 @@ final class ParserTest extends TestCase
             [],
         ];
 
-        yield [
+        yield 'simple rule' => [
             <<<'MAKEFILE'
                 foo: bar
                 	@echo "foo:bar"
@@ -163,11 +170,221 @@ final class ParserTest extends TestCase
             ],
         ];
 
-        yield [
+        yield 'simple rule with tabs' => [
+            <<<'MAKEFILE'
+                foo: bar
+                	@echo "foo:bar"
+                foz: baz
+                	@echo "foz:baz"
+                MAKEFILE,
+            [
+                ['foo', ['bar']],
+                ['foz', ['baz']],
+            ],
+        ];
+
+        yield 'variable' => [
             <<<'MAKEFILE'
                 FOO_URL="https://ex.co"
                 MAKEFILE,
             [],
+        ];
+
+        yield 'UTF-8 variable' => [
+            <<<'MAKEFILE'
+                EMOJI = 🥶
+                MAKEFILE,
+            [],
+        ];
+
+        yield 'conditional example' => [
+            <<<'MAKEFILE'
+                .PHONY: cs
+                cs: ## Runs PHP-CS-Fixer
+                cs: $(PHP_CS_FIXER_BIN)
+                ifndef SKIP_CS
+                    $(PHP_CS_FIXER)
+                endif
+                MAKEFILE,
+            [
+                ['.PHONY', ['cs']],
+                ['cs', ['## Runs PHP-CS-Fixer']],
+                ['cs', ['$(PHP_CS_FIXER_BIN)']],
+            ],
+        ];
+
+        yield 'comment with leading whitespace' => [
+            <<<'MAKEFILE'
+                  # foo
+                MAKEFILE,
+            [],
+        ];
+
+        yield 'variable assignment with leading whitespace' => [
+            <<<'MAKEFILE'
+                  FOO = BAR
+                MAKEFILE,
+            [],
+        ];
+
+        yield 'variable & comment with command' => [
+            <<<'MAKEFILE'
+                FLOCK := flock
+                # comment
+
+                foo: bar
+                MAKEFILE,
+            [
+                ['foo', ['bar']],
+            ],
+        ];
+
+        yield from self::officialDocumentationExamples();
+    }
+
+    private static function officialDocumentationExamples(): iterable
+    {
+        // See https://www.gnu.org/software/make/manual/html_node/Rule-Syntax.html
+        yield 'simple rule syntax' => [
+            <<<'MAKEFILE'
+                targets : prerequisites
+                    recipe
+                    …
+                MAKEFILE,
+            [
+                // TODO: should trim target here
+                ['targets ', ['prerequisites']],
+            ],
+        ];
+
+        // See https://www.gnu.org/software/make/manual/html_node/Rule-Syntax.html
+        yield 'alternative simple rule syntax' => [
+            <<<'MAKEFILE'
+                targets : prerequisites ; recipe
+                    recipe
+                    …
+                MAKEFILE,
+            [
+                // TODO: should trim target here
+                // TODO: should not include ; recipe
+                ['targets ', ['prerequisites', ';', 'recipe']],
+            ],
+        ];
+
+        // TODO: add support or add clear error about .RECIPEPREFIX
+        //   see https://www.gnu.org/software/make/manual/html_node/Special-Variables.html
+        yield '.RECIPEPREFIX example' => [
+            <<<'MAKEFILE'
+                .RECIPEPREFIX = >
+                all:
+                > @echo Hello, world
+                MAKEFILE,
+            [
+                ['all', []],
+            ],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Wildcard-Examples.html
+        yield 'wildcard example in recipe' => [
+            <<<'MAKEFILE'
+                clean:
+                    rm -f *.o
+                MAKEFILE,
+            [
+                ['clean', []],
+            ],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Wildcard-Examples.html
+        yield 'wildcard example in pre-requisite' => [
+            <<<'MAKEFILE'
+                print: *.c
+                    lpr -p $?
+                    touch print
+                MAKEFILE,
+            [
+                ['print', ['*.c']],
+            ],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Wildcard-Examples.html
+        yield 'variable with wildcard expansion' => [
+            <<<'MAKEFILE'
+                objects = *.o
+                MAKEFILE,
+            [],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Wildcard-Examples.html
+        yield 'variable with expanded wildcard expansion' => [
+            <<<'MAKEFILE'
+                objects := $(wildcard *.o)
+                MAKEFILE,
+            [],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Splitting-Recipe-Lines.html
+        yield 'split recipe (example #1)' => [
+            <<<'MAKEFILE'
+                all :
+                        @echo no\
+                space
+                        @echo no\
+                        space
+                        @echo one \
+                        space
+                        @echo one\
+                         space
+
+                MAKEFILE,
+            [
+                // TODO: this is incorrect
+                ['all ', ['space', 'space', 'space', 'space']],
+            ],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Splitting-Recipe-Lines.html
+        yield 'split recipe (example #2)' => [
+            <<<'MAKEFILE'
+                all : ; @echo 'hello \
+                    world' ; echo "hello \
+                world"
+
+                MAKEFILE,
+            [
+                // TODO: this is incorrect
+                ['all ', [';', '@echo', '\'hello', 'world\'', ';', 'echo', '"hello', 'world"']],
+            ],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
+        yield 'target specific variable' => [
+            <<<'MAKEFILE'
+                prog : CFLAGS = -g
+                prog : prog.o foo.o bar.o
+
+                MAKEFILE,
+            [
+                // TODO: this is incorrect
+                ['prog ', ['CFLAGS', '=', '-g']],
+                ['prog ', ['prog.o', 'foo.o', 'bar.o']],
+            ],
+        ];
+
+        // https://www.gnu.org/software/make/manual/html_node/Reference.html
+        yield 'basic variable reference (example #1)' => [
+            <<<'MAKEFILE'
+                objects = program.o foo.o utils.o
+                program : $(objects)
+                        cc -o program $(objects)
+
+                $(objects) : defs.h
+
+                MAKEFILE,
+            [
+                ['program ', ['$(objects)']],
+                ['$(objects) ', ['defs.h']],
+            ],
         ];
     }
 }

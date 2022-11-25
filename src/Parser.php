@@ -52,6 +52,11 @@ use const PHP_EOL;
 
 final class Parser
 {
+//    private static function isRule(string $line): bool
+//    {
+//
+//    }
+
     /**
      * @return array<string[][]>
      */
@@ -62,18 +67,14 @@ final class Parser
 
         foreach (explode(PHP_EOL, $makeFileContents) as $line) {
             if (str_starts_with($line, "\t")
-                || 1 === preg_match('/^\S+=.+$/u', $line)
+                || 1 === preg_match('/\S+=.+/', $line)
             ) {
                 continue;
             }
 
-            $line = trim($line);
-
             $previousMultiline = $multiline;
 
-            if (str_contains($line, ':=')
-                || str_starts_with($line, '#')
-            ) {
+            if (str_starts_with($line, '#')) {
                 continue;
             }
 
