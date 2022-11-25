@@ -40,6 +40,7 @@ use Fidry\Makefile\Parser;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
 use function current;
+use function function_exists;
 use function implode;
 use function Safe\file_get_contents;
 use function Safe\shell_exec;
@@ -83,8 +84,14 @@ abstract class BaseMakefileTestCase extends TestCase
 
     final public function test_it_has_a_help_command(): void
     {
+        $command = 'command -v timeout';
+
         try {
-            shell_exec('command -v timeout');
+            if (!function_exists('Safe\shell_exec')) {
+                \shell_exec($command);
+            } else {
+                shell_exec($command);
+            }
             $timeout = 'timeout 2s';
         } catch (ExecException $execException) {
             $timeout = '';
