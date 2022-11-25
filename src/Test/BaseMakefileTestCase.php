@@ -41,6 +41,7 @@ use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
 use Throwable;
 use function current;
+use function Safe\file_get_contents;
 use function implode;
 use function Safe\shell_exec;
 use function Safe\sprintf;
@@ -49,9 +50,9 @@ abstract class BaseMakefileTestCase extends TestCase
 {
     /**
      * @readonly
-     * @var list<array{string, list<string>}>
+     * @var list<array{string, list<string>}>|null
      */
-    protected static array $parsedMakefile;
+    protected static ?array $parsedMakefile = null;
 
     abstract protected static function getMakefilePath(): string;
 
@@ -60,10 +61,18 @@ abstract class BaseMakefileTestCase extends TestCase
     public static function setUpBeforeClass(): void
     {
         try {
-            static::$parsedMakefile = Parser::parse(static::getMakefilePath());
+            static::$parsedMakefile = Parser::parse(
+                file_get_contents(static::getMakefilePath()),
+            );
         } catch (Throwable $throwable) {
             // Continue
+            static::$parsedMakefile = null;
         }
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        static::$parsedMakefile = null;
     }
 
     final public function test_it_has_a_help_command(): void
@@ -98,7 +107,7 @@ abstract class BaseMakefileTestCase extends TestCase
         $targetComment = false;
         $matchedPhony = true;
 
-        foreach (self::$parsedMakefile as [$target, $dependencies]) {
+        foreach (static::$parsedMakefile as [$target, $dependencies]) {
             if ('.PHONY' === $target) {
                 self::assertCount(
                     1,
@@ -184,7 +193,7 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         $targetCounts = [];
 
-        foreach (self::$parsedMakefile as [$target, $dependencies]) {
+        foreach (static::$parsedMakefile as [$target, $dependencies]) {
             if ('.PHONY' === $target) {
                 continue;
             }

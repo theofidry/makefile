@@ -31,7 +31,7 @@ PHP_CS_FIXER = $(PHP_CS_FIXER_BIN) fix --ansi --verbose --config=.php-cs-fixer.p
 
 
 #
-# Command
+# Commands
 #---------------------------------------------------------------------------
 
 .PHONY: help
@@ -49,12 +49,11 @@ cs: 	   ## Fixes CS
 cs: $(PHP_CS_FIXER_BIN)
 	$(PHP_CS_FIXER)
 
-.PHONY: cs
+.PHONY: cs_lint
 cs_lint:   ## Lints CS
 cs_lint: php_cs_fixer_lint
 
 .PHONY: gitignore_sort
-gitignore_sort:
 gitignore_sort:
 	LC_ALL=C sort -u .gitignore -o .gitignore
 
@@ -107,7 +106,6 @@ infection: ## Runs infection
 infection: $(INFECTION_BIN) $(COVERAGE_DIR) vendor
 	if [ -d $(COVERAGE_DIR)/coverage-xml ]; then $(INFECTION); fi
 
- # hello
 
 #
 # Rules
