@@ -125,8 +125,8 @@ final class ParserTest extends TestCase
         yield 'simple command with multi-line pre-requisites with trailing spaces' => [
             <<<'MAKEFILE'
                 .PHONY: command
-                command: foo \
-                         bar \
+                command: foo \  
+                         bar \  
                          $(DEP)
                     @echo 'Hello'
                 MAKEFILE,
