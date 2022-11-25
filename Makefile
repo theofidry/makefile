@@ -35,23 +35,22 @@ PHP_CS_FIXER = $(PHP_CS_FIXER_BIN) fix --ansi --verbose --config=.php-cs-fixer.p
 #---------------------------------------------------------------------------
 
 .PHONY: help
-help: ## Shows the help
 help:
 	@printf "\033[33mUsage:\033[0m\n  make TARGET\n\n\033[32m#\n# Commands\n#---------------------------------------------------------------------------\033[0m\n"
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//' | awk 'BEGIN {FS = ":"}; {printf "\033[33m%s:\033[0m%s\n", $$1, $$2}'
 
 
 .PHONY: default
-default: ## Runs the default task: CS fix and all the tests
+default:   ## Runs the default task: CS fix and all the tests
 default: cs test
 
 .PHONY: cs
-cs: ## Fixes CS
+cs: 	   ## Fixes CS
 cs: $(PHP_CS_FIXER_BIN)
 	$(PHP_CS_FIXER)
 
 .PHONY: cs
-cs_lint: ## Lints CS
+cs_lint:   ## Lints CS
 cs_lint: php_cs_fixer_lint
 
 .PHONY: gitignore_sort
@@ -72,14 +71,14 @@ php_cs_fixer_lint: $(PHP_CS_FIXER_BIN)
 	$(PHP_CS_FIXER)
 
 .PHONY: psalm
-psalm: ## Runs Psalm
+psalm: 	   ## Runs Psalm
 psalm: $(PSALM_BIN) vendor
 ifndef SKIP_PSALM
 	$(PSALM)
 endif
 
 .PHONY: test
-test: ## Runs all the tests
+test:	   ## Runs all the tests
 test: composer_validate psalm infection
 
 .PHONY: composer_validate
@@ -88,7 +87,7 @@ composer_validate: vendor
 	composer validate --strict
 
 .PHONY: phpunit
-phpunit: ## Runs PHPUnit
+phpunit:   ## Runs PHPUnit
 phpunit: $(PHPUNIT_BIN) vendor
 	$(PHPUNIT)
 
@@ -98,7 +97,7 @@ phpunit_coverage_infection: $(PHPUNIT_BIN) vendor
 	$(PHPUNIT_COVERAGE_INFECTION)
 
 .PHONY: phpunit_coverage_html
-phpunit_coverage_html:	    ## Runs PHPUnit with code coverage with HTML report
+phpunit_coverage_html: ## Runs PHPUnit with code coverage with HTML report
 phpunit_coverage_html: $(PHPUNIT_BIN) vendor
 	$(PHPUNIT_COVERAGE_HTML)
 	@echo "You can check the report by opening the file \"$(COVERAGE_HTML)/index.html\"."
