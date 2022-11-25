@@ -52,11 +52,6 @@ use const PHP_EOL;
 
 final class Parser
 {
-//    private static function isRule(string $line): bool
-//    {
-//
-//    }
-
     /**
      * @return array<string[][]>
      */
