@@ -114,11 +114,7 @@ final class Parser
         return array_values(
             array_filter(
                 array_map(
-                    static function (string $dependency) use ($multiline): string {
-                        return trim(
-                            $multiline ? ltrim($dependency, '\\') : $dependency
-                        );
-                    },
+                    static fn (string $dependency) => $multiline ? ltrim($dependency, '\\') : $dependency,
                     explode(' ', $dependencies)
                 )
             )
