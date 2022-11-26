@@ -32,5 +32,11 @@
                 <referencedFunction name="Safe\sprintf"/>
             </errorLevel>
         </DeprecatedFunction>
+        
+        <ForbiddenCode>
+            <errorLevel type="suppress">
+                <file name="src/Test/BaseMakefileTestCase.php"/>
+            </errorLevel>
+        </ForbiddenCode>
     </issueHandlers>
 </psalm>

@@ -40,11 +40,13 @@ use Fidry\Makefile\Parser;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
 use function current;
+use function error_clear_last;
 use function function_exists;
 use function implode;
 use function Safe\file_get_contents;
 use function Safe\shell_exec;
 use function Safe\sprintf;
+use function shell_exec as unsafe_shell_exec;
 
 abstract class BaseMakefileTestCase extends TestCase
 {
@@ -84,20 +86,14 @@ abstract class BaseMakefileTestCase extends TestCase
 
     final public function test_it_has_a_help_command(): void
     {
-        $command = 'command -v timeout';
-
         try {
-            if (!function_exists('Safe\shell_exec')) {
-                \shell_exec($command);
-            } else {
-                shell_exec($command);
-            }
+            self::executeCommand('command -v timeout');
             $timeout = 'timeout 2s';
         } catch (ExecException $execException) {
             $timeout = '';
         }
 
-        $output = shell_exec(
+        $output = self::executeCommand(
             sprintf(
                 '%s make help --silent --file %s 2>&1',
                 $timeout,
@@ -224,5 +220,23 @@ abstract class BaseMakefileTestCase extends TestCase
                 sprintf('Expected to find only one declaration for the target "%s"', $target)
             );
         }
+    }
+
+    // TODO: remove this as we remove support for PHP 7.4 and Safe v1
+    private static function executeCommand(string $command): string
+    {
+        if (function_exists('Safe\shell_exec')) {
+            return shell_exec($command);
+        }
+
+        error_clear_last();
+
+        $safeResult = unsafe_shell_exec($command);
+
+        if (null === $safeResult || false === $safeResult) {
+            throw ExecException::createFromPhpError();
+        }
+
+        return $safeResult;
     }
 }
