@@ -38,6 +38,8 @@ namespace Fidry\Makefile;
 
 final class Rule
 {
+    private const PHONY_TARGET = '.PHONY';
+
     private string $target;
 
     /**
@@ -57,6 +59,11 @@ final class Rule
     public function getTarget(): string
     {
         return $this->target;
+    }
+
+    public function isPhony(): bool
+    {
+        return self::PHONY_TARGET === $this->target;
     }
 
     /**

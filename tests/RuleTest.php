@@ -82,6 +82,42 @@ final class RuleTest extends TestCase
     }
 
     /**
+     * @dataProvider phonyTargetProvider
+     */
+    public function test_it_can_detect_if_a_target_is_phony(Rule $rule, bool $expected): void
+    {
+        self::assertSame($expected, $rule->isPhony());
+    }
+
+    public static function phonyTargetProvider(): iterable
+    {
+        yield 'standard target' => [
+            new Rule('command', []),
+            false,
+        ];
+
+        yield 'PHONY target' => [
+            new Rule('.PHONY', []),
+            true,
+        ];
+
+        yield 'PHONY like target (extra space)' => [
+            new Rule('.PHONY ', []),
+            false,
+        ];
+
+        yield 'PHONY like target (missing dot)' => [
+            new Rule('PHONY', []),
+            false,
+        ];
+
+        yield 'PHONY like target (invalid case)' => [
+            new Rule('.phony', []),
+            false,
+        ];
+    }
+
+    /**
      * @param list<string> $expectedPrerequisites
      */
     private static function assertStateIs(

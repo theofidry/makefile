@@ -116,7 +116,7 @@ abstract class BaseMakefileTestCase extends TestCase
             $target = $rule->getTarget();
             $prerequisites = $rule->getPrerequisites();
 
-            if ('.PHONY' === $target) {
+            if ($rule->isPhony()) {
                 self::assertCount(
                     1,
                     $prerequisites,
@@ -205,7 +205,7 @@ abstract class BaseMakefileTestCase extends TestCase
             $target = $rule->getTarget();
             $prerequisites = $rule->getPrerequisites();
 
-            if ('.PHONY' === $target) {
+            if ($rule->isPhony()) {
                 continue;
             }
 
