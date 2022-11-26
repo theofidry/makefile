@@ -40,6 +40,7 @@ use function array_filter;
 use function array_map;
 use function array_merge;
 use function array_pop;
+use function array_reduce;
 use function array_values;
 use function count;
 use function explode;
@@ -53,60 +54,78 @@ use const PHP_EOL;
 final class Parser
 {
     /**
-     * @return list<array{string, list<string>}>
+     * @return list<array{string, list<string>}> Parses the rules. The first element of the tuple
+     *                            is the target and the second element its list of pre-requisites.
      */
     public static function parse(string $makeFileContents): array
     {
-        $targets = [];
         $multiline = false;
 
-        foreach (explode(PHP_EOL, $makeFileContents) as $line) {
-            if (str_starts_with($line, "\t")
-                || 1 === preg_match('/\S+=.+/', $line)
-            ) {
-                continue;
-            }
-
-            $previousMultiline = $multiline;
-
-            if (str_starts_with($line, '#')) {
-                continue;
-            }
-
-            $multiline = '\\' === mb_substr($line, -1);
-
-            if (false === $previousMultiline) {
-                $targetParts = explode(':', $line);
-
-                if (2 !== count($targetParts)) {
-                    continue;
-                }
-
-                $target = $targetParts[0];
-
-                $dependencies = self::parseDependencies($targetParts[1], $multiline);
-            } else {
-                /** @var array{string, list<string>} $lastEntry */
-                $lastEntry = array_pop($targets);
-
-                $target = $lastEntry[0];
-
-                $dependencies = array_merge(
-                    $lastEntry[1],
-                    self::parseDependencies($line, $multiline)
+        return array_reduce(
+            explode(PHP_EOL, $makeFileContents),
+            static function (array $parsedRules, string $line) use (&$multiline) {
+                return self::parseLine(
+                    $parsedRules,
+                    $line,
+                    $multiline,
                 );
-            }
+            },
+            [],
+        );
+    }
 
-            $targets[] = [$target, $dependencies];
+    /**
+     * @param list<array{string, list<string>}> $parsedRules
+     *
+     * @return list<array{string, list<string>}>
+     */
+    private static function parseLine(array $parsedRules, string $line, bool &$multiline): array
+    {
+        if (!self::isRule($line)) {
+            return $parsedRules;
         }
 
-        return $targets;
+        $previousMultiline = $multiline;
+        $multiline = '\\' === mb_substr($line, -1);
+
+        if (false === $previousMultiline) {
+            $targetParts = explode(':', $line);
+
+            if (2 !== count($targetParts)) {
+                return $parsedRules;
+            }
+
+            [$target, $prerequisites] = $targetParts;
+
+            $parsedPrerequisites = self::parsePrerequisites($prerequisites, $multiline);
+        } else {
+            /** @var array{string, list<string>} $lastEntry */
+            $lastEntry = array_pop($parsedRules);
+
+            $target = $lastEntry[0];
+
+            $parsedPrerequisites = array_merge(
+                $lastEntry[1],
+                self::parsePrerequisites($line, $multiline)
+            );
+        }
+
+        $parsedRules[] = [$target, $parsedPrerequisites];
+
+        return $parsedRules;
+    }
+
+    private static function isRule(string $line): bool
+    {
+        return !str_starts_with($line, '#')
+            && !str_starts_with($line, "\t")
+            && 0 === preg_match('/\S+=.+/', $line);
     }
 
     /**
      * @return list<string>
      */
-    private static function parseDependencies(string $dependencies, bool $multiline): array
+    private static function parsePrerequisites(string $dependencies, bool $multiline): array
     {
         if (str_contains($dependencies, '##')) {
             return [trim($dependencies)];

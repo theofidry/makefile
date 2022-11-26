@@ -111,19 +111,19 @@ abstract class BaseMakefileTestCase extends TestCase
         $targetComment = false;
         $matchedPhony = true;
 
-        foreach (static::getParsedMakefile() as [$target, $dependencies]) {
+        foreach (static::getParsedMakefile() as [$target, $prerequisites]) {
             if ('.PHONY' === $target) {
                 self::assertCount(
                     1,
-                    $dependencies,
+                    $prerequisites,
                     sprintf(
                         'Expected one target to be declared as .PHONY. Found: "%s"',
-                        implode('", "', $dependencies)
+                        implode('", "', $prerequisites)
                     )
                 );
 
                 $previousPhony = $phony;
-                $phony = current($dependencies);
+                $phony = current($prerequisites);
 
                 self::assertTrue(
                     $matchedPhony,
@@ -140,10 +140,10 @@ abstract class BaseMakefileTestCase extends TestCase
                 continue;
             }
 
-            if ([] !== $dependencies && str_starts_with($dependencies[0], '#')) {
+            if ([] !== $prerequisites && str_starts_with($prerequisites[0], '#')) {
                 self::assertStringStartsWith(
                     '## ',
-                    $dependencies[0],
+                    $prerequisites[0],
                     'Expected the target comment to be a documented comment'
                 );
 
@@ -197,12 +197,12 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         $targetCounts = [];
 
-        foreach (static::getParsedMakefile() as [$target, $dependencies]) {
+        foreach (static::getParsedMakefile() as [$target, $prerequisites]) {
             if ('.PHONY' === $target) {
                 continue;
             }
 
-            if ([] !== $dependencies && str_starts_with($dependencies[0], '## ')) {
+            if ([] !== $prerequisites && str_starts_with($prerequisites[0], '## ')) {
                 continue;
             }
 
