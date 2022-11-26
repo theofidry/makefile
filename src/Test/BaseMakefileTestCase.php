@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Test;
 
 use Fidry\Makefile\Parser;
+use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
 use function current;
@@ -52,7 +53,7 @@ abstract class BaseMakefileTestCase extends TestCase
 {
     /**
      * @readonly
-     * @var list<array{string, list<string>}>|null
+     * @var list<Rule>|null
      */
     protected static ?array $parsedMakefile = null;
 
@@ -71,7 +72,7 @@ abstract class BaseMakefileTestCase extends TestCase
     }
 
     /**
-     * @return list<array{string, list<string>}>
+     * @return list<Rule>
      */
     final protected static function getParsedMakefile(): array
     {
@@ -111,7 +112,10 @@ abstract class BaseMakefileTestCase extends TestCase
         $targetComment = false;
         $matchedPhony = true;
 
-        foreach (static::getParsedMakefile() as [$target, $prerequisites]) {
+        foreach (static::getParsedMakefile() as $rule) {
+            $target = $rule->getTarget();
+            $prerequisites = $rule->getPrerequisites();
+
             if ('.PHONY' === $target) {
                 self::assertCount(
                     1,
@@ -197,7 +201,10 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         $targetCounts = [];
 
-        foreach (static::getParsedMakefile() as [$target, $prerequisites]) {
+        foreach (static::getParsedMakefile() as $rule) {
+            $target = $rule->getTarget();
+            $prerequisites = $rule->getPrerequisites();
+
             if ('.PHONY' === $target) {
                 continue;
             }

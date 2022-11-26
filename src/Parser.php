@@ -38,7 +38,6 @@ namespace Fidry\Makefile;
 
 use function array_filter;
 use function array_map;
-use function array_merge;
 use function array_pop;
 use function array_reduce;
 use function array_values;
@@ -54,8 +53,7 @@ use const PHP_EOL;
 final class Parser
 {
     /**
-     * @return list<array{string, list<string>}> Parses the rules. The first element of the tuple
-     *                            is the target and the second element its list of pre-requisites.
+     * @return list<Rule>
      */
     public static function parse(string $makeFileContents): array
     {
@@ -75,9 +73,9 @@ final class Parser
     }
 
     /**
-     * @param list<array{string, list<string>}> $parsedRules
+     * @param list<Rule> $parsedRules
      *
-     * @return list<array{string, list<string>}>
+     * @return list<Rule>
      */
     private static function parseLine(array $parsedRules, string $line, bool &$multiline): array
     {
@@ -97,20 +95,20 @@ final class Parser
 
             [$target, $prerequisites] = $targetParts;
 
-            $parsedPrerequisites = self::parsePrerequisites($prerequisites, $multiline);
+            $rule = new Rule(
+                $target,
+                self::parsePrerequisites($prerequisites, $multiline),
+            );
         } else {
-            /** @var array{string, list<string>} $lastEntry */
-            $lastEntry = array_pop($parsedRules);
+            /** @var Rule $rule */
+            $rule = array_pop($parsedRules);
 
-            $target = $lastEntry[0];
-
-            $parsedPrerequisites = array_merge(
-                $lastEntry[1],
-                self::parsePrerequisites($line, $multiline)
+            $rule = $rule->withAdditionalPrerequisites(
+                self::parsePrerequisites($line, $multiline),
             );
         }
 
-        $parsedRules[] = [$target, $parsedPrerequisites];
+        $parsedRules[] = $rule;
 
         return $parsedRules;
     }
