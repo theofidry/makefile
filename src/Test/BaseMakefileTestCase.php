@@ -197,12 +197,12 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         $targetCounts = [];
 
-        foreach (static::getParsedMakefile() as [$target, $dependencies]) {
+        foreach (static::getParsedMakefile() as [$target, $prerequisites]) {
             if ('.PHONY' === $target) {
                 continue;
             }
 
-            if ([] !== $dependencies && str_starts_with($dependencies[0], '## ')) {
+            if ([] !== $prerequisites && str_starts_with($prerequisites[0], '## ')) {
                 continue;
             }
 
