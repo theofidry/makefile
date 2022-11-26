@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Tests;
 
 use Fidry\Makefile\Parser;
+use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -52,7 +53,7 @@ final class ParserTest extends TestCase
     {
         $actual = Parser::parse($content);
 
-        self::assertSame($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public static function makefileContentProvider(): iterable
@@ -71,8 +72,8 @@ final class ParserTest extends TestCase
                     @echo 'Hello'
                 MAKEFILE,
             [
-                ['.PHONY', ['command']],
-                ['command', ['foo', 'bar', '$(DEP)']],
+                new Rule('.PHONY', ['command']),
+                new Rule('command', ['foo', 'bar', '$(DEP)']),
             ],
         ];
 
@@ -87,10 +88,10 @@ final class ParserTest extends TestCase
                 	@echo "world!"
                 MAKEFILE,
             [
-                ['.PHONY', ['command1']],
-                ['command1', []],
-                ['.PHONY', ['command2']],
-                ['command2', []],
+                new Rule('.PHONY', ['command1']),
+                new Rule('command1', []),
+                new Rule('.PHONY', ['command2']),
+                new Rule('command2', []),
             ],
         ];
 
@@ -102,9 +103,9 @@ final class ParserTest extends TestCase
                     @echo 'Hello'
                 MAKEFILE,
             [
-                ['.PHONY', ['command']],
-                ['command', ['## Comment']],
-                ['command', ['foo', 'bar', '$(DEP)']],
+                new Rule('.PHONY', ['command']),
+                new Rule('command', ['## Comment']),
+                new Rule('command', ['foo', 'bar', '$(DEP)']),
             ],
         ];
 
@@ -117,8 +118,8 @@ final class ParserTest extends TestCase
                     @echo 'Hello'
                 MAKEFILE,
             [
-                ['.PHONY', ['command']],
-                ['command', ['foo', 'bar', '$(DEP)']],
+                new Rule('.PHONY', ['command']),
+                new Rule('command', ['foo', 'bar', '$(DEP)']),
             ],
         ];
 
@@ -131,8 +132,8 @@ final class ParserTest extends TestCase
                     @echo 'Hello'
                 MAKEFILE,
             [
-                ['.PHONY', ['command']],
-                ['command', ['foo', 'bar', '$(DEP)']],
+                new Rule('.PHONY', ['command']),
+                new Rule('command', ['foo', 'bar', '$(DEP)']),
             ],
         ];
 
@@ -145,8 +146,8 @@ final class ParserTest extends TestCase
                     @echo 'Hello'
                 MAKEFILE,
             [
-                ['.PHONY', ['command']],
-                ['command', ['foo', '\\']],
+                new Rule('.PHONY', ['command']),
+                new Rule('command', ['foo', '\\']),
             ],
         ];
 
@@ -168,13 +169,13 @@ final class ParserTest extends TestCase
                 command1: foo
                 MAKEFILE,
             [
-                ['.PHONY', ['command1', 'command2', 'command3']],
-                ['.PHONY', ['command2']],
-                ['command2', ['foo', 'bar', '$(DEP)']],
-                ['.PHONY', ['command1']],
-                ['command1', ['foo', 'bar']],
-                ['.PHONY', ['command2']],
-                ['command1', ['foo']],
+                new Rule('.PHONY', ['command1', 'command2', 'command3']),
+                new Rule('.PHONY', ['command2']),
+                new Rule('command2', ['foo', 'bar', '$(DEP)']),
+                new Rule('.PHONY', ['command1']),
+                new Rule('command1', ['foo', 'bar']),
+                new Rule('.PHONY', ['command2']),
+                new Rule('command1', ['foo']),
             ],
         ];
 
@@ -194,7 +195,7 @@ final class ParserTest extends TestCase
                 	@echo "foo:bar"
                 MAKEFILE,
             [
-                ['foo', ['bar']],
+                new Rule('foo', ['bar']),
             ],
         ];
 
@@ -206,8 +207,8 @@ final class ParserTest extends TestCase
                 	@echo "foz:baz"
                 MAKEFILE,
             [
-                ['foo', ['bar']],
-                ['foz', ['baz']],
+                new Rule('foo', ['bar']),
+                new Rule('foz', ['baz']),
             ],
         ];
 
@@ -235,9 +236,9 @@ final class ParserTest extends TestCase
                 endif
                 MAKEFILE,
             [
-                ['.PHONY', ['cs']],
-                ['cs', ['## Runs PHP-CS-Fixer']],
-                ['cs', ['$(PHP_CS_FIXER_BIN)']],
+                new Rule('.PHONY', ['cs']),
+                new Rule('cs', ['## Runs PHP-CS-Fixer']),
+                new Rule('cs', ['$(PHP_CS_FIXER_BIN)']),
             ],
         ];
 
@@ -263,7 +264,7 @@ final class ParserTest extends TestCase
                 foo: bar
                 MAKEFILE,
             [
-                ['foo', ['bar']],
+                new Rule('foo', ['bar']),
             ],
         ];
 
@@ -281,7 +282,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: should trim target here
-                ['targets ', ['prerequisites']],
+                new Rule('targets ', ['prerequisites']),
             ],
         ];
 
@@ -293,7 +294,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: should trim target here
-                ['target1 target2 ', ['prerequisite1', 'prerequisite2']],
+                new Rule('target1 target2 ', ['prerequisite1', 'prerequisite2']),
             ],
         ];
 
@@ -307,7 +308,7 @@ final class ParserTest extends TestCase
             [
                 // TODO: should trim target here
                 // TODO: should not include ; recipe
-                ['targets ', ['prerequisites', ';', 'recipe']],
+                new Rule('targets ', ['prerequisites', ';', 'recipe']),
             ],
         ];
 
@@ -320,7 +321,7 @@ final class ParserTest extends TestCase
                 > @echo Hello, world
                 MAKEFILE,
             [
-                ['all', []],
+                new Rule('all', []),
             ],
         ];
 
@@ -331,7 +332,7 @@ final class ParserTest extends TestCase
                     rm -f *.o
                 MAKEFILE,
             [
-                ['clean', []],
+                new Rule('clean', []),
             ],
         ];
 
@@ -343,7 +344,7 @@ final class ParserTest extends TestCase
                     touch print
                 MAKEFILE,
             [
-                ['print', ['*.c']],
+                new Rule('print', ['*.c']),
             ],
         ];
 
@@ -379,7 +380,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: this is incorrect
-                ['all ', ['space', 'space', 'space', 'space']],
+                new Rule('all ', ['space', 'space', 'space', 'space']),
             ],
         ];
 
@@ -393,7 +394,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: this is incorrect
-                ['all ', [';', '@echo', '\'hello', 'world\'', ';', 'echo', '"hello', 'world"']],
+                new Rule('all ', [';', '@echo', '\'hello', 'world\'', ';', 'echo', '"hello', 'world"']),
             ],
         ];
 
@@ -406,8 +407,8 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: this is incorrect
-                ['prog ', ['CFLAGS', '=', '-g']],
-                ['prog ', ['prog.o', 'foo.o', 'bar.o']],
+                new Rule('prog ', ['CFLAGS', '=', '-g']),
+                new Rule('prog ', ['prog.o', 'foo.o', 'bar.o']),
             ],
         ];
 
@@ -422,8 +423,8 @@ final class ParserTest extends TestCase
 
                 MAKEFILE,
             [
-                ['program ', ['$(objects)']],
-                ['$(objects) ', ['defs.h']],
+                new Rule('program ', ['$(objects)']),
+                new Rule('$(objects) ', ['defs.h']),
             ],
         ];
     }
