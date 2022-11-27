@@ -40,10 +40,8 @@ use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
-use function current;
 use function error_clear_last;
 use function function_exists;
-use function implode;
 use function Safe\file_get_contents;
 use function Safe\shell_exec;
 use function Safe\sprintf;
@@ -108,125 +106,16 @@ abstract class BaseMakefileTestCase extends TestCase
 
     final public function test_phony_targets_are_correctly_declared(): void
     {
-        $phony = null;
-        $targetComment = false;
-        $matchedPhony = true;
-
-        foreach (static::getParsedMakefile() as $rule) {
-            $target = $rule->getTarget();
-            $prerequisites = $rule->getPrerequisites();
-
-            if ($rule->isPhony()) {
-                self::assertCount(
-                    1,
-                    $prerequisites,
-                    sprintf(
-                        'Expected one target to be declared as .PHONY. Found: "%s"',
-                        implode('", "', $prerequisites)
-                    )
-                );
-
-                $previousPhony = $phony;
-                $phony = current($prerequisites);
-
-                self::assertTrue(
-                    $matchedPhony,
-                    sprintf(
-                        '"%s" has been declared as a .PHONY target but no such target could '
-                        .'be found',
-                        $previousPhony
-                    )
-                );
-
-                $targetComment = false;
-                $matchedPhony = false;
-
-                continue;
-            }
-
-            if ([] !== $prerequisites && str_starts_with($prerequisites[0], '#')) {
-                self::assertStringStartsWith(
-                    '## ',
-                    $prerequisites[0],
-                    'Expected the target comment to be a documented comment'
-                );
-
-                self::assertSame(
-                    $phony,
-                    $target,
-                    'Expected the declared target to match the previous declared .PHONY'
-                );
-
-                self::assertFalse(
-                    $targetComment,
-                    sprintf(
-                        'Did not expect to find twice the target comment line for "%s"',
-                        $target
-                    )
-                );
-
-                self::assertFalse(
-                    $matchedPhony,
-                    sprintf(
-                        'Did not expect to find the target comment line before its target '
-                        .'definition for "%s"',
-                        $target
-                    )
-                );
-
-                $targetComment = true;
-
-                continue;
-            }
-
-            if (null !== $phony && false === $matchedPhony) {
-                $matchedPhony = true;
-
-                self::assertSame(
-                    $phony,
-                    $target,
-                    'Expected the declared target to match the previous declared .PHONY'
-                );
-
-                continue;
-            }
-
-            $phony = null;
-            $targetComment = false;
-            $matchedPhony = false;
-        }
+        Assert::assertHasValidPhonyTargetDeclarations(
+            static::getParsedMakefile(),
+        );
     }
 
-    final public function test_no_target_is_being_declared_twice(): void
+    final public function test_no_target_is_being_declared_multiple_times(): void
     {
-        $targetCounts = [];
-
-        foreach (static::getParsedMakefile() as $rule) {
-            $target = $rule->getTarget();
-            $prerequisites = $rule->getPrerequisites();
-
-            if ($rule->isPhony()) {
-                continue;
-            }
-
-            if ([] !== $prerequisites && str_starts_with($prerequisites[0], '## ')) {
-                continue;
-            }
-
-            if (array_key_exists($target, $targetCounts)) {
-                ++$targetCounts[$target];
-            } else {
-                $targetCounts[$target] = 1;
-            }
-        }
-
-        foreach ($targetCounts as $target => $count) {
-            self::assertSame(
-                1,
-                $count,
-                sprintf('Expected to find only one declaration for the target "%s"', $target)
-            );
-        }
+        Assert::assertNotNull(
+            static::getParsedMakefile(),
+        );
     }
 
     // TODO: remove this as we remove support for PHP 7.4 and Safe v1
