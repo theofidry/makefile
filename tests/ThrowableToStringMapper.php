@@ -66,7 +66,7 @@ final class ThrowableToStringMapper
 
         return sprintf(
             "%s: %s\n",
-            $throwable::class,
+            get_class($throwable),
             $throwable->getMessage(),
         );
     }
