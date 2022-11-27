@@ -158,6 +158,11 @@ final class RuleTest extends TestCase
             Rule::createPhony(['#progA progB']),
             true,
         ];
+
+        yield 'rule with no pre-requisite' => [
+            new Rule('command', []),
+            false,
+        ];
     }
 
     /**
@@ -199,6 +204,11 @@ final class RuleTest extends TestCase
 
         yield 'PHONY rule with Makefile comment' => [
             Rule::createPhony(['#progA progB']),
+            false,
+        ];
+
+        yield 'rule with no pre-requisite' => [
+            new Rule('command', []),
             false,
         ];
     }

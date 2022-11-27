@@ -146,7 +146,43 @@ final class ValidCommandDeclarationTest extends ConstraintTestCase
             null,
         ];
 
-        // TODO: add tests for PHONY with comments: first PHONY is a comment, 2nd rule is a comment but a PHONY one...
+        yield 'command declaration with an invalid command afterwards' => [
+            [
+                Rule::createPhony(['command1']),
+                new Rule('command1', ['progA', 'progB']),
+
+                Rule::createPhony(['command2']),
+                new Rule('command3', []),
+            ],
+            <<<'EOF'
+                Failed asserting that the rule "command3: " has the same target as the previous PHONY declaration.
+                --- Expected
+                +++ Actual
+                @@ @@
+                -command2
+                +command3
+
+                EOF,
+        ];
+
+        yield 'invalid command after non phony target' => [
+            [
+                new Rule('command', ['progA', 'progB']),
+
+                Rule::createPhony(['command2']),
+                new Rule('command3', []),
+            ],
+            <<<'EOF'
+                Failed asserting that the rule "command3: " has the same target as the previous PHONY declaration.
+                --- Expected
+                +++ Actual
+                @@ @@
+                -command2
+                +command3
+
+                EOF,
+        ];
+
         yield 'two PHONY targets' => [
             [
                 Rule::createPhony(['command1']),

@@ -124,5 +124,41 @@ final class NoDuplicateTargetTest extends ConstraintTestCase
             ],
             null,
         ];
+
+        yield 'target declared twice with other rules in-between' => [
+            [
+                new Rule('command1', ['progA']),
+                new Rule('command2', ['progB']),
+                new Rule('command1', ['progC']),
+            ],
+            <<<'EOF'
+                Failed asserting that the target "command1" is declared only once. Found 2 declarations.
+
+                EOF,
+        ];
+
+        yield 'target declared twice with other rules before' => [
+            [
+                new Rule('command2', ['progB']),
+                new Rule('command1', ['progA']),
+                new Rule('command1', ['progC']),
+            ],
+            <<<'EOF'
+                Failed asserting that the target "command1" is declared only once. Found 2 declarations.
+
+                EOF,
+        ];
+
+        yield 'target declared twice with a comment in-between' => [
+            [
+                new Rule('command1', ['progA']),
+                new Rule('command2', ['## progB']),
+                new Rule('command1', ['progC']),
+            ],
+            <<<'EOF'
+                Failed asserting that the target "command1" is declared only once. Found 2 declarations.
+
+                EOF,
+        ];
     }
 }
