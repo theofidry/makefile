@@ -156,7 +156,7 @@ final class ValidCommandDeclaration extends BaseConstraint
                 sprintf(
                     'the rule "%s" is valid. Cannot have multiple PHONY targets mixed up in a command declaration',
                     $nextRule->toString(),
-                )
+                ),
             );
         }
 

@@ -133,9 +133,9 @@ final class Parser
             array_filter(
                 array_map(
                     static fn (string $dependency) => $multiline ? ltrim($dependency, '\\') : $dependency,
-                    explode(' ', $dependencies)
-                )
-            )
+                    explode(' ', $dependencies),
+                ),
+            ),
         );
     }
 }
