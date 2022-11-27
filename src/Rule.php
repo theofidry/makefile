@@ -36,6 +36,11 @@ declare(strict_types=1);
 
 namespace Fidry\Makefile;
 
+use function current;
+use function implode;
+use function sprintf;
+use function str_starts_with;
+
 final class Rule
 {
     private const PHONY_TARGET = '.PHONY';
@@ -46,6 +51,14 @@ final class Rule
      * @var list<string>
      */
     private array $prerequisites;
+
+    /**
+     * @param list<string> $prerequisites
+     */
+    public static function createPhony(array $prerequisites): self
+    {
+        return new self(self::PHONY_TARGET, $prerequisites);
+    }
 
     /**
      * @param list<string> $prerequisites
@@ -80,11 +93,42 @@ final class Rule
         );
     }
 
+    public function isComment(): bool
+    {
+        $firstPrerequisite = current($this->prerequisites);
+
+        if (false === $firstPrerequisite) {
+            return false;
+        }
+
+        return str_starts_with($firstPrerequisite, '#');
+    }
+
+    public function isCommandComment(): bool
+    {
+        $firstPrerequisite = current($this->prerequisites);
+
+        if (false === $firstPrerequisite) {
+            return false;
+        }
+
+        return str_starts_with($firstPrerequisite, '##');
+    }
+
     /**
      * @return list<string>
      */
     public function getPrerequisites(): array
     {
         return $this->prerequisites;
+    }
+
+    public function toString(): string
+    {
+        return sprintf(
+            '%s: %s',
+            $this->target,
+            implode(' ', $this->prerequisites),
+        );
     }
 }

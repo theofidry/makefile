@@ -98,13 +98,13 @@ final class ParserTest extends TestCase
         yield 'simple command with a help comment' => [
             <<<'MAKEFILE'
                 .PHONY: command
-                command:    ## Comment
+                command:    ## Long comment
                 command: foo bar $(DEP)
                     @echo 'Hello'
                 MAKEFILE,
             [
                 new Rule('.PHONY', ['command']),
-                new Rule('command', ['## Comment']),
+                new Rule('command', ['## Long comment']),
                 new Rule('command', ['foo', 'bar', '$(DEP)']),
             ],
         ];
@@ -265,6 +265,15 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 new Rule('foo', ['bar']),
+            ],
+        ];
+
+        yield 'phony target without target' => [
+            <<<'MAKEFILE'
+                .PHONY:
+                MAKEFILE,
+            [
+                new Rule('.PHONY', []),
             ],
         ];
 

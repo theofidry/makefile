@@ -118,6 +118,92 @@ final class RuleTest extends TestCase
     }
 
     /**
+     * @dataProvider makefileCommentProvider
+     */
+    public function test_it_can_detect_the_rule_is_a_target_with_a_makefile_comment(
+        Rule $rule,
+        bool $expected
+    ): void {
+        self::assertSame($expected, $rule->isComment());
+    }
+
+    public static function makefileCommentProvider(): iterable
+    {
+        yield 'rule' => [
+            new Rule('command', ['progA', 'progB']),
+            false,
+        ];
+
+        yield 'PHONY rule' => [
+            Rule::createPhony(['progA', 'progB']),
+            false,
+        ];
+
+        yield 'rule with Makefile comment' => [
+            new Rule('command', ['#progA progB']),
+            true,
+        ];
+
+        yield 'rule with command comment' => [
+            new Rule('command', ['##progA progB']),
+            true,
+        ];
+
+        yield 'rule with extra comment marker' => [
+            new Rule('command', ['###progA progB']),
+            true,
+        ];
+
+        yield 'PHONY rule with Makefile comment' => [
+            Rule::createPhony(['#progA progB']),
+            true,
+        ];
+    }
+
+    /**
+     * @dataProvider commandCommentProvider
+     */
+    public function test_it_can_detect_the_rule_is_a_target_with_a_command_comment(
+        Rule $rule,
+        bool $expected
+    ): void {
+        self::assertSame($expected, $rule->isCommandComment());
+    }
+
+    public static function commandCommentProvider(): iterable
+    {
+        yield 'rule' => [
+            new Rule('command', ['progA', 'progB']),
+            false,
+        ];
+
+        yield 'PHONY rule' => [
+            Rule::createPhony(['progA', 'progB']),
+            false,
+        ];
+
+        yield 'rule with Makefile comment' => [
+            new Rule('command', ['#progA progB']),
+            false,
+        ];
+
+        yield 'rule with command comment' => [
+            new Rule('command', ['##progA progB']),
+            true,
+        ];
+
+        yield 'rule with extra comment marker' => [
+            new Rule('command', ['###progA progB']),
+            true,
+        ];
+
+        yield 'PHONY rule with Makefile comment' => [
+            Rule::createPhony(['#progA progB']),
+            false,
+        ];
+    }
+
+    /**
      * @param list<string> $expectedPrerequisites
      */
     private static function assertStateIs(
