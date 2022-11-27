@@ -44,6 +44,7 @@ use function array_values;
 use function count;
 use function explode;
 use function ltrim;
+use function rtrim;
 use function Safe\preg_match;
 use function str_contains;
 use function str_starts_with;
@@ -96,7 +97,7 @@ final class Parser
             [$target, $prerequisites] = $targetParts;
 
             $rule = new Rule(
-                $target,
+                rtrim($target),
                 self::parsePrerequisites($prerequisites, $multiline),
             );
         } else {

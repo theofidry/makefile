@@ -290,8 +290,7 @@ final class ParserTest extends TestCase
                     …
                 MAKEFILE,
             [
-                // TODO: should trim target here
-                new Rule('targets ', ['prerequisites']),
+                new Rule('targets', ['prerequisites']),
             ],
         ];
 
@@ -302,8 +301,7 @@ final class ParserTest extends TestCase
                     …
                 MAKEFILE,
             [
-                // TODO: should trim target here
-                new Rule('target1 target2 ', ['prerequisite1', 'prerequisite2']),
+                new Rule('target1 target2', ['prerequisite1', 'prerequisite2']),
             ],
         ];
 
@@ -315,9 +313,8 @@ final class ParserTest extends TestCase
                     …
                 MAKEFILE,
             [
-                // TODO: should trim target here
                 // TODO: should not include ; recipe
-                new Rule('targets ', ['prerequisites', ';', 'recipe']),
+                new Rule('targets', ['prerequisites', ';', 'recipe']),
             ],
         ];
 
@@ -389,7 +386,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: this is incorrect
-                new Rule('all ', ['space', 'space', 'space', 'space']),
+                new Rule('all', ['space', 'space', 'space', 'space']),
             ],
         ];
 
@@ -403,7 +400,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: this is incorrect
-                new Rule('all ', [';', '@echo', '\'hello', 'world\'', ';', 'echo', '"hello', 'world"']),
+                new Rule('all', [';', '@echo', '\'hello', 'world\'', ';', 'echo', '"hello', 'world"']),
             ],
         ];
 
@@ -416,8 +413,8 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 // TODO: this is incorrect
-                new Rule('prog ', ['CFLAGS', '=', '-g']),
-                new Rule('prog ', ['prog.o', 'foo.o', 'bar.o']),
+                new Rule('prog', ['CFLAGS', '=', '-g']),
+                new Rule('prog', ['prog.o', 'foo.o', 'bar.o']),
             ],
         ];
 
@@ -432,8 +429,8 @@ final class ParserTest extends TestCase
 
                 MAKEFILE,
             [
-                new Rule('program ', ['$(objects)']),
-                new Rule('$(objects) ', ['defs.h']),
+                new Rule('program', ['$(objects)']),
+                new Rule('$(objects)', ['defs.h']),
             ],
         ];
     }
