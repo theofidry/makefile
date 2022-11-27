@@ -106,6 +106,7 @@ final class ValidCommandDeclaration extends BaseConstraint
             }
 
             (new SinglePrerequisitePhony())->checkOther($rule, $description);
+            /** @psalm-suppress PossiblyUndefinedIntArrayOffset */
             $phonyTarget = $rule->getPrerequisites()[0];
 
             $nextRule = self::getNextRule($rule, $uncheckedRules);
@@ -139,7 +140,6 @@ final class ValidCommandDeclaration extends BaseConstraint
      */
     private static function getNextRule(Rule $rule, array &$rules): Rule
     {
-        /** @var Rule|null $nextRule */
         $nextRule = array_shift($rules);
 
         if (null === $nextRule) {
@@ -164,7 +164,7 @@ final class ValidCommandDeclaration extends BaseConstraint
     }
 
     private function checkCommandComment(
-        ?Rule $rule,
+        Rule $rule,
         string $phonyTarget,
         string $description
     ): void {
@@ -189,7 +189,7 @@ final class ValidCommandDeclaration extends BaseConstraint
     }
 
     private function checkCommandRule(
-        ?Rule $rule,
+        Rule $rule,
         string $phonyTarget,
         string $description
     ): void {

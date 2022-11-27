@@ -32,11 +32,21 @@
                 <referencedFunction name="Safe\sprintf"/>
             </errorLevel>
         </DeprecatedFunction>
-        
+
         <ForbiddenCode>
             <errorLevel type="suppress">
                 <file name="src/Test/BaseMakefileTestCase.php"/>
             </errorLevel>
         </ForbiddenCode>
+
+        <InternalMethod errorLevel="suppress"/>
+
+        <MissingConstructor>
+            <errorLevel type="suppress">
+                <file name="src/Test/Constraint/BaseConstraint.php"/>
+            </errorLevel>
+        </MissingConstructor>
+
+        <UnusedConstructor errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

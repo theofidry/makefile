@@ -69,6 +69,7 @@ abstract class ConstraintTestCase extends TestCase
             // Continue
         }
 
+        /** @psalm-suppress PossiblyUndefinedVariable */
         if (!isset($expectationFailed)) {
             self::fail(
                 sprintf(

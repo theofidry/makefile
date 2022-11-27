@@ -60,7 +60,7 @@ final class AssertTest extends TestCase
         Rule $rule,
         ?string $expectedAssertionFailureMessage
     ): void {
-        $assert = static fn () => Assert::assertSinglePrerequisitePhony($rule);
+        $assert = static function () use ($rule): void { Assert::assertSinglePrerequisitePhony($rule); };
 
         if (null === $expectedAssertionFailureMessage) {
             $assert();
@@ -96,7 +96,7 @@ final class AssertTest extends TestCase
         $rules,
         ?string $expectedAssertionFailureMessage
     ): void {
-        $assert = static fn () => Assert::assertHasValidPhonyTargetDeclarations($rules);
+        $assert = static function () use ($rules): void { Assert::assertHasValidPhonyTargetDeclarations($rules); };
 
         if (null === $expectedAssertionFailureMessage) {
             $assert();
@@ -138,7 +138,7 @@ final class AssertTest extends TestCase
         $rules,
         ?string $expectedAssertionFailureMessage
     ): void {
-        $assert = static fn () => Assert::assertNoDuplicateTarget($rules);
+        $assert = static function () use ($rules): void { Assert::assertNoDuplicateTarget($rules); };
 
         if (null === $expectedAssertionFailureMessage) {
             $assert();
