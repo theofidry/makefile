@@ -59,14 +59,16 @@ final class Parser
     public static function parse(string $makeFileContents): array
     {
         $multiline = false;
+        $ignoreNextLinesOfMultiline = false;
 
         return array_reduce(
             explode(PHP_EOL, $makeFileContents),
-            static function (array $parsedRules, string $line) use (&$multiline) {
+            static function (array $parsedRules, string $line) use (&$multiline, &$ignoreNextLinesOfMultiline) {
                 return self::parseLine(
                     $parsedRules,
                     $line,
                     $multiline,
+                    $ignoreNextLinesOfMultiline,
                 );
             },
             [],
@@ -78,8 +80,12 @@ final class Parser
      *
      * @return list<Rule>
      */
-    private static function parseLine(array $parsedRules, string $line, bool &$multiline): array
-    {
+    private static function parseLine(
+        array $parsedRules,
+        string $line,
+        bool &$multiline,
+        bool &$ignoreNextLinesOfMultiline
+    ): array {
         if (!self::isRule($line)) {
             return $parsedRules;
         }
@@ -98,14 +104,14 @@ final class Parser
 
             $rule = new Rule(
                 rtrim($target),
-                self::parsePrerequisites($prerequisites, $multiline),
+                self::parsePrerequisites($prerequisites, $multiline, $ignoreNextLinesOfMultiline),
             );
         } else {
             /** @var Rule $rule */
             $rule = array_pop($parsedRules);
 
             $rule = $rule->withAdditionalPrerequisites(
-                self::parsePrerequisites($line, $multiline),
+                self::parsePrerequisites($line, $multiline, $ignoreNextLinesOfMultiline),
             );
         }
 
@@ -124,10 +130,24 @@ final class Parser
     /**
      * @return list<string>
      */
-    private static function parsePrerequisites(string $dependencies, bool $multiline): array
-    {
+    private static function parsePrerequisites(
+        string $dependencies,
+        bool $multiline,
+        bool &$ignoreNextLinesOfMultiline
+    ): array {
+        if ($ignoreNextLinesOfMultiline && $multiline) {
+            return [];
+        }
+
         if (str_contains($dependencies, '##')) {
             return [trim($dependencies)];
+        }
+
+        $semiColumnPosition = mb_strpos($dependencies, ';');
+
+        if (false !== $semiColumnPosition) {
+            $dependencies = mb_substr($dependencies, 0, $semiColumnPosition);
+            $ignoreNextLinesOfMultiline = true;
         }
 
         return array_values(

@@ -313,8 +313,21 @@ final class ParserTest extends TestCase
                     …
                 MAKEFILE,
             [
-                // TODO: should not include ; recipe
-                new Rule('targets', ['prerequisites', ';', 'recipe']),
+                new Rule('targets', ['prerequisites']),
+            ],
+        ];
+
+        yield 'simple rule after alternative simple rule syntax' => [
+            <<<'MAKEFILE'
+                targets : prerequisites ; recipe
+                    recipe
+                    …
+
+                targets : prerequisites
+                MAKEFILE,
+            [
+                new Rule('targets', ['prerequisites']),
+                new Rule('targets', ['prerequisites']),
             ],
         ];
 
@@ -385,7 +398,7 @@ final class ParserTest extends TestCase
 
                 MAKEFILE,
             [
-                // TODO: this is incorrect
+                // TODO: this is not correct, but it is not a case we are interested in handling yet
                 new Rule('all', ['space', 'space', 'space', 'space']),
             ],
         ];
@@ -399,8 +412,23 @@ final class ParserTest extends TestCase
 
                 MAKEFILE,
             [
-                // TODO: this is incorrect
-                new Rule('all', [';', '@echo', '\'hello', 'world\'', ';', 'echo', '"hello', 'world"']),
+                // TODO: this is not correct, but it is not a case we are interested in handling yet
+                new Rule('all', ['world"']),
+            ],
+        ];
+        yield 'simple rule after split recipe (example #2)' => [
+            <<<'MAKEFILE'
+                all : ; @echo 'hello \
+                    world' ; echo "hello \
+                world"
+                
+                cmd: bar
+
+                MAKEFILE,
+            [
+                // TODO: this is not correct, but it is not a case we are interested in handling yet
+                new Rule('all', ['world"']),
+                new Rule('cmd', ['bar']),
             ],
         ];
 
