@@ -51,8 +51,8 @@ final class WorkingDirectoryMakefileTest extends BaseMakefileTestCase
     protected function getExpectedHelpOutput(): string
     {
         return <<<'EOF'
-            ./Makefile ./README.md
-        
+            ./README.md
+
             EOF;
     }
 }
