@@ -85,12 +85,7 @@ abstract class BaseMakefileTestCase extends TestCase
 
     final public function test_it_has_a_help_command(): void
     {
-        try {
-            self::executeCommand('command -v timeout');
-            $timeout = 'timeout 2s';
-        } catch (ExecException $execException) {
-            $timeout = '';
-        }
+        $timeout = self::getTimeout();
 
         $output = self::executeCommand(
             sprintf(
@@ -99,6 +94,7 @@ abstract class BaseMakefileTestCase extends TestCase
                 static::getMakefilePath(),
             ),
         );
+
         $expectedOutput = $this->getExpectedHelpOutput();
 
         self::assertSame($expectedOutput, $output);
@@ -134,5 +130,16 @@ abstract class BaseMakefileTestCase extends TestCase
         }
 
         return $safeResult;
+    }
+
+    private static function getTimeout(): string
+    {
+        try {
+            self::executeCommand('command -v timeout');
+
+            return 'timeout 2s';
+        } catch (ExecException $execException) {
+            return '';
+        }
     }
 }
