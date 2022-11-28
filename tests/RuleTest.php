@@ -213,6 +213,38 @@ final class RuleTest extends TestCase
         ];
     }
 
+    public function test_it_can_create_a_phony_rule(): void
+    {
+        $rule = Rule::createPhony(['progA', 'progB']);
+
+        self::assertTrue($rule->isPhony());
+    }
+
+    /**
+     * @dataProvider ruleToStringProvider
+     */
+    public function test_it_can_be_casted_into_a_string(
+        Rule $rule,
+        string $expected
+    ): void {
+        $actual = $rule->toString();
+
+        self::assertSame($expected, $actual);
+    }
+
+    public static function ruleToStringProvider(): iterable
+    {
+        yield 'rule without pre-requisites' => [
+            new Rule('cmd', []),
+            'cmd:',
+        ];
+
+        yield 'rule with pre-requisites' => [
+            new Rule('cmd', ['progA', 'progB']),
+            'cmd: progA progB',
+        ];
+    }
+
     /**
      * @param list<string> $expectedPrerequisites
      */

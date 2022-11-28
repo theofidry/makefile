@@ -116,7 +116,7 @@ final class ValidCommandDeclarationTest extends ConstraintTestCase
                 Rule::createPhony([]),
             ],
             <<<'EOF'
-                Failed asserting that the rule ".PHONY: " has one and only one pre-requisite. 0 pre-requisite found.
+                Failed asserting that the rule ".PHONY:" has one and only one pre-requisite. 0 pre-requisite found.
 
                 EOF,
         ];
@@ -155,7 +155,7 @@ final class ValidCommandDeclarationTest extends ConstraintTestCase
                 new Rule('command3', []),
             ],
             <<<'EOF'
-                Failed asserting that the rule "command3: " has the same target as the previous PHONY declaration.
+                Failed asserting that the rule "command3:" has the same target as the previous PHONY declaration.
                 --- Expected
                 +++ Actual
                 @@ @@
@@ -173,7 +173,7 @@ final class ValidCommandDeclarationTest extends ConstraintTestCase
                 new Rule('command3', []),
             ],
             <<<'EOF'
-                Failed asserting that the rule "command3: " has the same target as the previous PHONY declaration.
+                Failed asserting that the rule "command3:" has the same target as the previous PHONY declaration.
                 --- Expected
                 +++ Actual
                 @@ @@

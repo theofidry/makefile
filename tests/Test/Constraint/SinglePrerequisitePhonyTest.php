@@ -73,7 +73,7 @@ final class SinglePrerequisitePhonyTest extends ConstraintTestCase
         yield 'empty PHONY target' => [
             Rule::createPhony([]),
             <<<'EOF'
-                Failed asserting that the rule ".PHONY: " has one and only one pre-requisite. 0 pre-requisite found.
+                Failed asserting that the rule ".PHONY:" has one and only one pre-requisite. 0 pre-requisite found.
 
                 EOF,
         ];

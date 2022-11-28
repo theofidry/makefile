@@ -14,9 +14,25 @@
         "@default": true,
         "MBString": false,
 
+        "FunctionCallRemoval": {
+            "ignore": [
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeInDirectory"
+            ]
+        },
         "GreaterThan": {
             "ignore": [
                 "Fidry\\Makefile\\Test\\Constraint\\SinglePrerequisitePhony::checkHasOnePrerequisite"
+            ]
+        },
+        "MethodCallRemoval": {
+            "ignore": [
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getTimeout"
+            ]
+        },
+        "PublicVisibility": false,
+        "UnwrapFinally": {
+            "ignore": [
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeInDirectory"
             ]
         }
     }
