@@ -40,9 +40,12 @@ use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
+use function dirname;
 use function error_clear_last;
 use function function_exists;
+use function Safe\chdir;
 use function Safe\file_get_contents;
+use function Safe\getcwd;
 use function Safe\shell_exec;
 use function Safe\sprintf;
 use function shell_exec as unsafe_shell_exec;
@@ -85,20 +88,21 @@ abstract class BaseMakefileTestCase extends TestCase
 
     final public function test_it_has_a_help_command(): void
     {
-        try {
-            self::executeCommand('command -v timeout');
-            $timeout = 'timeout 2s';
-        } catch (ExecException $execException) {
-            $timeout = '';
-        }
-
-        $output = self::executeCommand(
+        $makefilePath = static::getMakefilePath();
+        $timeout = self::getTimeout();
+        $executeHelp = static fn (): string => self::executeCommand(
             sprintf(
                 '%s make help --silent --file %s 2>&1',
                 $timeout,
-                static::getMakefilePath(),
+                $makefilePath,
             ),
         );
+
+        $output = self::executeInDirectory(
+            dirname($makefilePath),
+            $executeHelp,
+        );
+
         $expectedOutput = $this->getExpectedHelpOutput();
 
         self::assertSame($expectedOutput, $output);
@@ -134,5 +138,31 @@ abstract class BaseMakefileTestCase extends TestCase
         }
 
         return $safeResult;
+    }
+
+    private static function getTimeout(): string
+    {
+        try {
+            self::executeCommand('command -v timeout');
+
+            return 'timeout 2s';
+        } catch (ExecException $execException) {
+            return '';
+        }
+    }
+
+    /**
+     * @param callable(): string $execute
+     */
+    private static function executeInDirectory(string $directory, callable $execute): string
+    {
+        $currentWorkingDirectory = getcwd();
+        chdir($directory);
+
+        try {
+            return $execute();
+        } finally {
+            chdir($currentWorkingDirectory);
+        }
     }
 }
