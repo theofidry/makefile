@@ -56,7 +56,7 @@ abstract class BaseMakefileTestCase extends TestCase
      * @readonly
      * @var list<Rule>|null
      */
-    protected static ?array $parsedMakefile = null;
+    protected static ?array $parsedRules = null;
 
     abstract protected static function getMakefilePath(): string;
 
@@ -64,26 +64,26 @@ abstract class BaseMakefileTestCase extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        static::getParsedMakefile();
+        static::getParsedRules();
     }
 
     public static function tearDownAfterClass(): void
     {
-        static::$parsedMakefile = null;
+        static::$parsedRules = null;
     }
 
     /**
      * @return list<Rule>
      */
-    final protected static function getParsedMakefile(): array
+    final protected static function getParsedRules(): array
     {
-        if (!isset(static::$parsedMakefile)) {
-            static::$parsedMakefile = Parser::parse(
+        if (!isset(static::$parsedRules)) {
+            static::$parsedRules = Parser::parse(
                 file_get_contents(static::getMakefilePath()),
             );
         }
 
-        return static::$parsedMakefile;
+        return static::$parsedRules;
     }
 
     final public function test_it_has_a_help_command(): void
@@ -111,14 +111,14 @@ abstract class BaseMakefileTestCase extends TestCase
     final public function test_phony_targets_are_correctly_declared(): void
     {
         Assert::assertHasValidPhonyTargetDeclarations(
-            static::getParsedMakefile(),
+            static::getParsedRules(),
         );
     }
 
     final public function test_no_target_is_being_declared_multiple_times(): void
     {
         Assert::assertNotNull(
-            static::getParsedMakefile(),
+            static::getParsedRules(),
         );
     }
 
