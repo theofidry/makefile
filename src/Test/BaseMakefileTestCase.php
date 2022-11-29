@@ -88,21 +88,7 @@ abstract class BaseMakefileTestCase extends TestCase
 
     final public function test_it_has_a_help_command(): void
     {
-        $makefilePath = static::getMakefilePath();
-        $timeout = self::getTimeout();
-        $executeHelp = static fn (): string => self::executeCommand(
-            sprintf(
-                '%s make help --silent --file %s 2>&1',
-                $timeout,
-                $makefilePath,
-            ),
-        );
-
-        $output = self::executeInDirectory(
-            dirname($makefilePath),
-            $executeHelp,
-        );
-
+        $output = self::executeMakeCommand('help');
         $expectedOutput = $this->getExpectedHelpOutput();
 
         self::assertSame($expectedOutput, $output);
@@ -119,6 +105,24 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         Assert::assertNotNull(
             static::getParsedRules(),
+        );
+    }
+
+    private static function executeMakeCommand(string $commandName): string
+    {
+        $timeout = self::getTimeout();
+        $makefilePath = static::getMakefilePath();
+
+        $makeCommand = sprintf(
+            '%s make %s --silent --file %s 2>&1',
+            $timeout,
+            $commandName,
+            $makefilePath,
+        );
+
+        return self::executeInDirectory(
+            dirname($makefilePath),
+            static fn (): string => self::executeCommand($makeCommand),
         );
     }
 
