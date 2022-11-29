@@ -108,7 +108,7 @@ abstract class BaseMakefileTestCase extends TestCase
         );
     }
 
-    private static function executeMakeCommand(string $commandName): string
+    final protected static function executeMakeCommand(string $commandName): string
     {
         $timeout = self::getTimeout();
         $makefilePath = static::getMakefilePath();
@@ -127,7 +127,7 @@ abstract class BaseMakefileTestCase extends TestCase
     }
 
     // TODO: remove this as we remove support for PHP 7.4 and Safe v1
-    private static function executeCommand(string $command): string
+    final protected static function executeCommand(string $command): string
     {
         if (function_exists('Safe\shell_exec')) {
             return shell_exec($command);
