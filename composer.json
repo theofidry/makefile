@@ -24,6 +24,7 @@
         "infection/infection": "^0.26",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.4.3",
+        "symfony/phpunit-bridge": "^6.2",
         "webmozarts/strict-phpunit": "^7.3"
     },
     "config": {
