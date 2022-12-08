@@ -28,6 +28,7 @@ $header = trim(
 ));
 
 $config = new FidryConfig($header, 74_000);
+$config->setCacheFile(__DIR__.'/dist/.php-cs-fixer.cache');
 $config->addRules([
     'no_trailing_whitespace_in_string' => false,
 ]);

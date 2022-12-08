@@ -66,7 +66,7 @@ php_cs_fixer: $(PHP_CS_FIXER_BIN)
 	$(PHP_CS_FIXER)
 
 .PHONY: php_cs_fixer_lint
-php_cs_fixer_lint: $(PHP_CS_FIXER_BIN)
+php_cs_fixer_lint: $(PHP_CS_FIXER_BIN) dist
 	$(PHP_CS_FIXER)
 
 .PHONY: psalm
@@ -87,23 +87,23 @@ composer_validate: vendor
 
 .PHONY: phpunit
 phpunit:   ## Runs PHPUnit
-phpunit: $(PHPUNIT_BIN) vendor
+phpunit: $(PHPUNIT_BIN) dist vendor
 	$(PHPUNIT)
 
 .PHONY: phpunit_coverage_infection
 phpunit_coverage_infection: ## Runs PHPUnit with code coverage for Infection
-phpunit_coverage_infection: $(PHPUNIT_BIN) vendor
+phpunit_coverage_infection: $(PHPUNIT_BIN) dist vendor
 	$(PHPUNIT_COVERAGE_INFECTION)
 
 .PHONY: phpunit_coverage_html
 phpunit_coverage_html: ## Runs PHPUnit with code coverage with HTML report
-phpunit_coverage_html: $(PHPUNIT_BIN) vendor
+phpunit_coverage_html: $(PHPUNIT_BIN) dist vendor
 	$(PHPUNIT_COVERAGE_HTML)
 	@echo "You can check the report by opening the file \"$(COVERAGE_HTML)/index.html\"."
 
 .PHONY: infection
 infection: ## Runs infection
-infection: $(INFECTION_BIN) $(COVERAGE_DIR) vendor
+infection: $(INFECTION_BIN) $(COVERAGE_DIR) dist vendor
 	if [ -d $(COVERAGE_DIR)/coverage-xml ]; then $(INFECTION); fi
 
 
@@ -140,3 +140,7 @@ ifndef SKIP_PSALM
 	composer bin psalm install
 	touch -c $@
 endif
+
+dist:
+	mkdir -p dist
+	touch $@
