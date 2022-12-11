@@ -61,6 +61,10 @@ gitignore_sort:
 composer_normalize: vendor
 	$(COMPOSER) normalize
 
+.PHONY: composer_normalize_lint
+composer_normalize_lint: vendor
+	$(COMPOSER) normalize --dry-run
+
 .PHONY: php_cs_fixer
 php_cs_fixer: $(PHP_CS_FIXER_BIN)
 	$(PHP_CS_FIXER)
