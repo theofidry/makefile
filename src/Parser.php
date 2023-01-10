@@ -143,10 +143,10 @@ final class Parser
             return [trim($dependencies)];
         }
 
-        $semiColumnPosition = mb_strpos($dependencies, ';');
+        $semicolonPosition = mb_strpos($dependencies, ';');
 
-        if (false !== $semiColumnPosition) {
-            $dependencies = mb_substr($dependencies, 0, $semiColumnPosition);
+        if (false !== $semicolonPosition) {
+            $dependencies = mb_substr($dependencies, 0, $semicolonPosition);
             $ignoreNextLinesOfMultiline = true;
         }
 
