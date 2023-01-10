@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This code is licensed under the BSD 3-Clause License.e
+ * This code is licensed under the BSD 3-Clause License.
  *
  * Copyright (c) 2022, Théo FIDRY <theo.fidry@gmail.com>
  * All rights reserved.

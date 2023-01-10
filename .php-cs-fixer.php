@@ -23,7 +23,7 @@ $header = trim(
     'This code is licensed under the BSD 3-Clause License.%s',
     substr(
         file_get_contents('LICENSE'),
-        strlen('BSD 3-Clause License'),
+        strlen('BSD 3-Clause License') + 1,
     ),
 ));
 
