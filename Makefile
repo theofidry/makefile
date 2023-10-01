@@ -46,12 +46,11 @@ default: cs test
 
 .PHONY: cs
 cs: 	   ## Fixes CS
-cs: $(PHP_CS_FIXER_BIN)
-	$(PHP_CS_FIXER)
+cs: gitignore_sort composer_normalize php_cs_fixer
 
 .PHONY: cs_lint
 cs_lint:   ## Lints CS
-cs_lint: php_cs_fixer_lint
+cs_lint: composer_normalize_lint php_cs_fixer_lint
 
 .PHONY: gitignore_sort
 gitignore_sort:
