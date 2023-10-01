@@ -57,8 +57,10 @@ final class Rule
     /**
      * @param list<string> $prerequisites
      */
-    public function __construct(private readonly string $target, private readonly array $prerequisites)
-    {
+    public function __construct(
+        private readonly string $target,
+        private readonly array $prerequisites,
+    ) {
     }
 
     public function getTarget(): string
