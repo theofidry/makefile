@@ -10,7 +10,7 @@ on:
         - cron: "* 10 5 * *"
 
 jobs:
-    tests:
+    psalm:
         runs-on: "ubuntu-latest"
         name: "Psalm ${{ matrix.php }}"
         strategy:
