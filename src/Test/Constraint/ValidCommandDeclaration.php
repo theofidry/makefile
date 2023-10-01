@@ -58,12 +58,10 @@ final class ValidCommandDeclaration extends BaseConstraint
     }
 
     /**
-     * @param mixed $other
      * @psalm-assert Rule[] $other
-     *
      * @throws MatchingFailure
      */
-    private static function checkIsArrayOfRules($other): void
+    private static function checkIsArrayOfRules(mixed $other): void
     {
         if (!is_array($other)) {
             throw new MatchingFailure(
@@ -98,7 +96,7 @@ final class ValidCommandDeclaration extends BaseConstraint
         // TODO: add test for non list rules
         $uncheckedRules = $rules;
 
-        while (count($uncheckedRules) > 0) {
+        while ((is_countable($uncheckedRules) ? count($uncheckedRules) : 0) > 0) {
             $rule = array_shift($uncheckedRules);
 
             if (!$rule->isPhony()) {

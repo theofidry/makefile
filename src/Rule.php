@@ -46,13 +46,6 @@ final class Rule
 {
     private const PHONY_TARGET = '.PHONY';
 
-    private string $target;
-
-    /**
-     * @var list<string>
-     */
-    private array $prerequisites;
-
     /**
      * @param list<string> $prerequisites
      */
@@ -64,10 +57,8 @@ final class Rule
     /**
      * @param list<string> $prerequisites
      */
-    public function __construct(string $target, array $prerequisites)
+    public function __construct(private readonly string $target, private readonly array $prerequisites)
     {
-        $this->target = $target;
-        $this->prerequisites = $prerequisites;
     }
 
     public function getTarget(): string

@@ -34,48 +34,16 @@
 
 declare(strict_types=1);
 
-namespace Fidry\Makefile\Tests\Test\Constraint;
+use Rector\Config\RectorConfig;
+use Rector\Set\ValueObject\LevelSetList;
 
-use Fidry\Makefile\Tests\ThrowableToStringMapper;
-use PHPUnit\Framework\Constraint\Constraint;
-use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\TestCase;
-use function get_debug_type;
-use function sprintf;
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->paths([
+        __DIR__.'/src',
+        __DIR__.'/tests',
+    ]);
 
-abstract class ConstraintTestCase extends TestCase
-{
-    final protected static function assertConstraintDoesNotFail(Constraint $constraint, mixed $other): void
-    {
-        $result = $constraint->evaluate($other);
-
-        self::assertNull($result);
-    }
-
-    final protected static function assertConstraintFails(
-        Constraint $constraint,
-        mixed $other,
-        string $expectedAssertionFailureMessage
-    ): void {
-        try {
-            $result = $constraint->evaluate($other);
-        } catch (ExpectationFailedException $expectationFailed) {
-            // Continue
-        }
-
-        /** @psalm-suppress PossiblyUndefinedVariable */
-        if (!isset($expectationFailed)) {
-            self::fail(
-                sprintf(
-                    'Expected assertion failure. The evaluation of the constraint returned "%s"',
-                    get_debug_type($result),
-                ),
-            );
-        }
-
-        self::assertSame(
-            $expectedAssertionFailureMessage,
-            ThrowableToStringMapper::map($expectationFailed),
-        );
-    }
-}
+    $rectorConfig->sets([
+        LevelSetList::UP_TO_PHP_81,
+    ]);
+};

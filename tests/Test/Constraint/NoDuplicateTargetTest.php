@@ -49,11 +49,9 @@ final class NoDuplicateTargetTest extends ConstraintTestCase
 {
     /**
      * @dataProvider valueProvider
-     *
-     * @param mixed $value
      */
     public function test_it_tests_that_no_target_is_declared_twice(
-        $value,
+        mixed $value,
         ?string $expectedExpectationFailureMessage
     ): void {
         $constraint = new NoDuplicateTarget();

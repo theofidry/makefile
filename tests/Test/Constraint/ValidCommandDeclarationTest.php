@@ -49,11 +49,9 @@ final class ValidCommandDeclarationTest extends ConstraintTestCase
 {
     /**
      * @dataProvider valueProvider
-     *
-     * @param mixed $value
      */
     public function test_it_tests_that_the_phony_declarations_declare_a_command(
-        $value,
+        mixed $value,
         ?string $expectedExpectationFailureMessage
     ): void {
         $constraint = new ValidCommandDeclaration();

@@ -56,12 +56,10 @@ final class SinglePrerequisitePhony extends BaseConstraint
     }
 
     /**
-     * @param mixed $other
      * @psalm-assert Rule $other
-     *
      * @throws MatchingFailure
      */
-    private static function checkIsRuleInstance($other): void
+    private static function checkIsRuleInstance(mixed $other): void
     {
         if (!($other instanceof Rule)) {
             throw new MatchingFailure(
