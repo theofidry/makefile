@@ -26,6 +26,9 @@ PSALM = $(PSALM_BIN) --no-cache
 PHP_CS_FIXER_BIN = vendor-bin/php-cs-fixer/vendor/friendsofphp/php-cs-fixer/php-cs-fixer
 PHP_CS_FIXER = $(PHP_CS_FIXER_BIN) fix --ansi --verbose --config=.php-cs-fixer.php
 
+RECTOR_BIN = vendor-bin/rector/vendor/bin/rector
+RECTOR = $(RECTOR_BIN)
+
 
 .DEFAULT_GOAL := default
 
@@ -46,11 +49,11 @@ default: cs test
 
 .PHONY: cs
 cs: 	   ## Fixes CS
-cs: gitignore_sort composer_normalize php_cs_fixer
+cs: gitignore_sort composer_normalize rector php_cs_fixer
 
 .PHONY: cs_lint
 cs_lint:   ## Lints CS
-cs_lint: composer_normalize_lint php_cs_fixer_lint
+cs_lint: composer_normalize_lint rector_lint php_cs_fixer_lint
 
 .PHONY: gitignore_sort
 gitignore_sort:
@@ -71,6 +74,18 @@ php_cs_fixer: $(PHP_CS_FIXER_BIN)
 .PHONY: php_cs_fixer_lint
 php_cs_fixer_lint: $(PHP_CS_FIXER_BIN) dist
 	$(PHP_CS_FIXER)
+
+.PHONY: rector
+rector: $(RECTOR_BIN)
+ifndef SKIP_RECTOR
+	$(RECTOR)
+endif
+
+.PHONY: rector_lint
+rector_lint: $(RECTOR_BIN) dist
+ifndef SKIP_RECTOR
+	$(RECTOR) --dry-run
+endif
 
 .PHONY: psalm
 psalm: 	   ## Runs Psalm
@@ -141,6 +156,12 @@ endif
 $(PSALM_BIN): vendor
 ifndef SKIP_PSALM
 	composer bin psalm install
+	touch -c $@
+endif
+
+$(RECTOR_BIN): vendor
+ifndef SKIP_RECTOR
+	composer bin rector install
 	touch -c $@
 endif
 

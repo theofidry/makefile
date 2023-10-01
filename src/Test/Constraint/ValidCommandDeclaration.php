@@ -54,16 +54,16 @@ final class ValidCommandDeclaration extends BaseConstraint
     public function checkOther($other, string $description): void
     {
         self::checkIsArrayOfRules($other);
+
         $this->checkRules($other, $description);
     }
 
     /**
-     * @param mixed $other
      * @psalm-assert Rule[] $other
      *
      * @throws MatchingFailure
      */
-    private static function checkIsArrayOfRules($other): void
+    private static function checkIsArrayOfRules(mixed $other): void
     {
         if (!is_array($other)) {
             throw new MatchingFailure(

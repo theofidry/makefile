@@ -150,7 +150,7 @@ abstract class BaseMakefileTestCase extends TestCase
             self::executeCommand('command -v timeout');
 
             return 'timeout 2s';
-        } catch (ExecException $execException) {
+        } catch (ExecException) {
             return '';
         }
     }

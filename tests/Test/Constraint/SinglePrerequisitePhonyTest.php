@@ -49,11 +49,9 @@ final class SinglePrerequisitePhonyTest extends ConstraintTestCase
 {
     /**
      * @dataProvider valueProvider
-     *
-     * @param mixed $value
      */
     public function test_it_tests_that_a_rule_is_phony_and_has_one_and_only_one_pre_requisite(
-        $value,
+        mixed $value,
         ?string $expectedExpectationFailureMessage
     ): void {
         $constraint = new SinglePrerequisitePhony();
