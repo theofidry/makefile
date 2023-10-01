@@ -1,17 +1,17 @@
 {
     "name": "fidry/makefile",
-    "type": "library",
     "description": "Utility to parse a Makefile and implement some convention rules.",
     "license": "BSD-3-Clause",
+    "type": "library",
+    "keywords": [
+        "makefile"
+    ],
     "authors": [
         {
             "name": "Théo Fidry",
             "email": "theo.fidry@gmail.com"
         }
     ],
-    "keywords": ["makefile"],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "^8.1",
         "thecodingmachine/safe": "^2.0"
@@ -25,23 +25,8 @@
         "symfony/phpunit-bridge": "^6.2",
         "webmozarts/strict-phpunit": "^7.3"
     },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "ergebnis/composer-normalize": true,
-            "infection/extension-installer": true,
-            "bamarni/composer-bin-plugin": true
-        }
-    },
-    "extra": {
-        "bamarni-bin": {
-            "bin-links": false,
-            "forward-command": false
-        },
-        "branch-alias": {
-            "dev-main": "1.0.x-dev"
-        }
-    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Fidry\\Makefile\\": "src"
@@ -50,6 +35,23 @@
     "autoload-dev": {
         "psr-4": {
             "Fidry\\Makefile\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "infection/extension-installer": true,
+            "bamarni/composer-bin-plugin": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": false,
+            "forward-command": false
+        },
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
         }
     }
 }
