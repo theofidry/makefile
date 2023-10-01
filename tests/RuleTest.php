@@ -213,6 +213,54 @@ final class RuleTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider regularRuleProvider
+     */
+    public function test_it_can_detect_the_rule_is_a_regular_rule(
+        Rule $rule,
+        bool $expected
+    ): void {
+        self::assertSame($expected, $rule->isRegularRule());
+    }
+
+    public static function regularRuleProvider(): iterable
+    {
+        yield 'rule' => [
+            new Rule('command', ['progA', 'progB']),
+            true,
+        ];
+
+        yield 'PHONY rule' => [
+            Rule::createPhony(['progA', 'progB']),
+            false,
+        ];
+
+        yield 'rule with Makefile comment' => [
+            new Rule('command', ['#progA progB']),
+            false,
+        ];
+
+        yield 'rule with command comment' => [
+            new Rule('command', ['##progA progB']),
+            false,
+        ];
+
+        yield 'rule with extra comment marker' => [
+            new Rule('command', ['###progA progB']),
+            false,
+        ];
+
+        yield 'PHONY rule with Makefile comment' => [
+            Rule::createPhony(['#progA progB']),
+            false,
+        ];
+
+        yield 'rule with no pre-requisite' => [
+            new Rule('command', []),
+            true,
+        ];
+    }
+
     public function test_it_can_create_a_phony_rule(): void
     {
         $rule = Rule::createPhony(['progA', 'progB']);

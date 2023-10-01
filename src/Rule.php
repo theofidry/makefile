@@ -73,6 +73,11 @@ final class Rule
         return self::PHONY_TARGET === $this->target;
     }
 
+    public function isRegularRule(): bool
+    {
+        return !$this->isPhony() && !$this->isComment();
+    }
+
     /**
      * @param list<string> $prerequisites
      */
