@@ -86,6 +86,8 @@ final class Parser
         bool &$multiline,
         bool &$ignoreNextLinesOfMultiline
     ): array {
+        $line = rtrim($line);
+
         if (!self::isRule($line)) {
             return $parsedRules;
         }

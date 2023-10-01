@@ -147,7 +147,7 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 new Rule('.PHONY', ['command']),
-                new Rule('command', ['foo', '\\']),
+                new Rule('command', ['foo', 'bar', '$(DEP)']),
             ],
         ];
 
