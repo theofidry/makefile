@@ -62,7 +62,7 @@ final class Assert extends PHPUnitAssert
      * declares a single target, is optionally followed by a comment line and
      * then a rule to declare the command itself.
      *
-     * @param list<Rule> $rules
+     * @param Rule[] $rules
      */
     public static function assertHasValidPhonyTargetDeclarations(
         array $rules,
@@ -74,9 +74,9 @@ final class Assert extends PHPUnitAssert
     }
 
     /**
-     * Asserts that the a rule target is not declared twice.
+     * Asserts that a rule target is not declared twice.
      *
-     * @param list<Rule> $rules
+     * @param Rule[] $rules
      */
     public static function assertNoDuplicateTarget(
         array $rules,

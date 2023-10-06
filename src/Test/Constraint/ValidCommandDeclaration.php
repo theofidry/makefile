@@ -51,7 +51,7 @@ final class ValidCommandDeclaration extends BaseConstraint
         return 'is a Makefile "command" declaration';
     }
 
-    public function checkOther($other, string $description): void
+    public function checkOther(mixed $other, string $description): void
     {
         self::checkIsArrayOfRules($other);
 

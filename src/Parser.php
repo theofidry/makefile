@@ -76,7 +76,7 @@ final class Parser
     }
 
     /**
-     * @param list<Rule> $parsedRules
+     * @param Rule[] $parsedRules
      *
      * @return list<Rule>
      */
@@ -86,6 +86,7 @@ final class Parser
         bool &$multiline,
         bool &$ignoreNextLinesOfMultiline
     ): array {
+        $parsedRules = array_values($parsedRules);
         $line = rtrim($line);
 
         if (!self::isRule($line)) {

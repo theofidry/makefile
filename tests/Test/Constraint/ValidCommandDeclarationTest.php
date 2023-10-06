@@ -38,18 +38,17 @@ namespace Fidry\Makefile\Tests\Test\Constraint;
 
 use Fidry\Makefile\Rule;
 use Fidry\Makefile\Test\Constraint\ValidCommandDeclaration;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 /**
- * @covers \Fidry\Makefile\Test\Constraint\ValidCommandDeclaration
- *
  * @internal
  */
+#[CoversClass(ValidCommandDeclaration::class)]
 final class ValidCommandDeclarationTest extends ConstraintTestCase
 {
-    /**
-     * @dataProvider valueProvider
-     */
+    #[DataProvider('valueProvider')]
     public function test_it_tests_that_the_phony_declarations_declare_a_command(
         mixed $value,
         ?string $expectedExpectationFailureMessage

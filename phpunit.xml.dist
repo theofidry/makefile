@@ -11,21 +11,13 @@
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0"/>
     </php>
 
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-    </listeners>
-
-    <extensions>
-        <extension class="Webmozarts\StrictPHPUnit\StrictPHPUnitExtension"/>
-    </extensions>
-
     <testsuites>
         <testsuite name="Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <source>
         <include>
             <directory>src</directory>
         </include>
@@ -33,5 +25,5 @@
         <exclude>
             <file>src/Test/Constraint/BaseConstraint.php</file>
         </exclude>
-    </coverage>
+    </source>
 </phpunit>

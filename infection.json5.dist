@@ -40,6 +40,11 @@
             ]
         },
         "PublicVisibility": false,
+        "UnwrapArrayValues": {
+            "ignore": [
+                "Fidry\\Makefile\\Parser::parseLine"
+            ]
+        },
         "UnwrapFinally": {
             "ignore": [
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeInDirectory"

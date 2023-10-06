@@ -42,20 +42,19 @@ use Fidry\Makefile\Tests\Test\Constraint\NoDuplicateTargetTest;
 use Fidry\Makefile\Tests\Test\Constraint\SinglePrerequisitePhonyTest;
 use Fidry\Makefile\Tests\Test\Constraint\ValidCommandDeclarationTest;
 use Fidry\Makefile\Tests\ThrowableToStringMapper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use function is_array;
 
 /**
- * @covers \Fidry\Makefile\Test\Assert
- *
  * @internal
  */
+#[CoversClass(Assert::class)]
 final class AssertTest extends TestCase
 {
-    /**
-     * @dataProvider singlePrerequisitePhonyProvider
-     */
+    #[DataProvider('singlePrerequisitePhonyProvider')]
     public function test_it_tests_that_a_rule_is_phony_and_has_one_and_only_one_pre_requisite(
         Rule $rule,
         ?string $expectedAssertionFailureMessage
@@ -88,12 +87,11 @@ final class AssertTest extends TestCase
     }
 
     /**
-     * @dataProvider phonyDeclarationsProvider
-     *
      * @param Rule[] $rules
      */
+    #[DataProvider('phonyDeclarationsProvider')]
     public function test_it_tests_that_the_phony_declarations_declare_a_command(
-        $rules,
+        array $rules,
         ?string $expectedAssertionFailureMessage
     ): void {
         $assert = static function () use ($rules): void { Assert::assertHasValidPhonyTargetDeclarations($rules); };
@@ -130,12 +128,11 @@ final class AssertTest extends TestCase
     }
 
     /**
-     * @dataProvider duplicateTargetProvider
-     *
      * @param Rule[] $rules
      */
+    #[DataProvider('duplicateTargetProvider')]
     public function test_it_tests_that_no_target_is_declared_twice(
-        $rules,
+        array $rules,
         ?string $expectedAssertionFailureMessage
     ): void {
         $assert = static function () use ($rules): void { Assert::assertNoDuplicateTarget($rules); };

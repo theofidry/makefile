@@ -38,18 +38,17 @@ namespace Fidry\Makefile\Tests\Test\Constraint;
 
 use Fidry\Makefile\Rule;
 use Fidry\Makefile\Test\Constraint\NoDuplicateTarget;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 /**
- * @covers \Fidry\Makefile\Test\Constraint\NoDuplicateTarget
- *
  * @internal
  */
+#[CoversClass(NoDuplicateTarget::class)]
 final class NoDuplicateTargetTest extends ConstraintTestCase
 {
-    /**
-     * @dataProvider valueProvider
-     */
+    #[DataProvider('valueProvider')]
     public function test_it_tests_that_no_target_is_declared_twice(
         mixed $value,
         ?string $expectedExpectationFailureMessage
