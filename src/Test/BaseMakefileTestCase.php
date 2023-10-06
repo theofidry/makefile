@@ -134,7 +134,7 @@ abstract class BaseMakefileTestCase extends TestCase
     final protected static function executeCommand(string $command): string
     {
         $command = sprintf(
-            'MAKEFLAGS=%s %s',
+            'MAKEFLAGS="%s" %s',
             self::getNonDebugMakeFlags(),
             $command,
         );
@@ -160,7 +160,7 @@ abstract class BaseMakefileTestCase extends TestCase
 
         $nonDebugFlags = array_filter(
             explode(' ', $makeFlags),
-            static fn (string $flag) => str_starts_with('--debug=', $flag),
+            static fn (string $flag) => !str_starts_with($flag, '--debug='),
         );
 
         return implode(' ', $nonDebugFlags);
