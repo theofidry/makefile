@@ -40,7 +40,7 @@ use Fidry\Makefile\Rule;
 use function array_key_exists;
 use function get_debug_type;
 use function is_array;
-use function Safe\sprintf;
+use function sprintf;
 
 final class NoDuplicateTarget extends BaseConstraint
 {

@@ -42,17 +42,14 @@ use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\ExecException;
 use function array_filter;
 use function dirname;
-use function error_clear_last;
 use function explode;
-use function function_exists;
 use function getenv;
 use function implode;
 use function Safe\chdir;
 use function Safe\file_get_contents;
 use function Safe\getcwd;
 use function Safe\shell_exec;
-use function Safe\sprintf;
-use function shell_exec as unsafe_shell_exec;
+use function sprintf;
 
 abstract class BaseMakefileTestCase extends TestCase
 {
@@ -130,7 +127,9 @@ abstract class BaseMakefileTestCase extends TestCase
         );
     }
 
-    // TODO: remove this as we remove support for PHP 7.4 and Safe v1
+    /**
+     * @throws ExecException
+     */
     final protected static function executeCommand(string $command): string
     {
         $command = sprintf(
@@ -139,19 +138,7 @@ abstract class BaseMakefileTestCase extends TestCase
             $command,
         );
 
-        if (function_exists('Safe\shell_exec')) {
-            return shell_exec($command);
-        }
-
-        error_clear_last();
-
-        $safeResult = unsafe_shell_exec($command);
-
-        if (null === $safeResult || false === $safeResult) {
-            throw ExecException::createFromPhpError();
-        }
-
-        return $safeResult;
+        return shell_exec($command);
     }
 
     final protected static function getNonDebugMakeFlags(): string

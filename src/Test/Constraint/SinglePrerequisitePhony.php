@@ -39,7 +39,7 @@ namespace Fidry\Makefile\Test\Constraint;
 use Fidry\Makefile\Rule;
 use function count;
 use function get_debug_type;
-use function Safe\sprintf;
+use function sprintf;
 
 final class SinglePrerequisitePhony extends BaseConstraint
 {

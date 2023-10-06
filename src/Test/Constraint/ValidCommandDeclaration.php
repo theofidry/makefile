@@ -42,7 +42,7 @@ use function array_shift;
 use function count;
 use function get_debug_type;
 use function is_array;
-use function Safe\sprintf;
+use function sprintf;
 
 final class ValidCommandDeclaration extends BaseConstraint
 {
