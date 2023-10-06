@@ -14,6 +14,12 @@
         "@default": true,
         "MBString": false,
 
+        "CastString": {
+            "ignore": [
+                // Testing that getenv() does not return a string is difficult there.
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getNonDebugMakeFlags"
+            ]
+        },
         "FunctionCallRemoval": {
             "ignore": [
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeInDirectory"
