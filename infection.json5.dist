@@ -13,6 +13,9 @@
     "mutators": {
         "@default": true,
         "MBString": false,
+        "global-ignore": [
+            "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getNonDebugMakeFlags"
+        ],
 
         "CastString": {
             "ignore": [
@@ -22,6 +25,7 @@
         },
         "FunctionCallRemoval": {
             "ignore": [
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeCommand",
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeInDirectory"
             ]
         },
