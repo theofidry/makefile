@@ -53,8 +53,10 @@ final class ThrowableToStringMapper
                 $buffer .= $throwable->getComparisonFailure()->getDiff();
             }
 
+            /** @psalm-suppress UndefinedClass */
             if ($throwable instanceof PhptAssertionFailedError) {
-                $buffer .= $throwable->getDiff();
+                /** @psalm-suppress UndefinedMethod */
+                $buffer .= $throwable->diff();
             }
 
             if (!empty($buffer)) {

@@ -6,9 +6,10 @@
         strictBinaryOperands="true"
         ignoreInternalFunctionFalseReturn="false"
         ignoreInternalFunctionNullReturn="false"
-        findUnusedVariablesAndParams="true"
+        findUnusedBaselineEntry="false"
         findUnusedCode="true"
         findUnusedPsalmSuppress="true"
+        findUnusedVariablesAndParams="true"
         ensureArrayStringOffsetsExist="true"
         ensureArrayIntOffsetsExist="true"
         phpVersion="8.1">
@@ -27,12 +28,6 @@
     </projectFiles>
 
     <issueHandlers>
-        <DeprecatedFunction>
-            <errorLevel type="suppress">
-                <referencedFunction name="Safe\sprintf"/>
-            </errorLevel>
-        </DeprecatedFunction>
-
         <ForbiddenCode>
             <errorLevel type="suppress">
                 <file name="src/Test/BaseMakefileTestCase.php"/>
@@ -46,6 +41,12 @@
                 <file name="src/Test/Constraint/BaseConstraint.php"/>
             </errorLevel>
         </MissingConstructor>
+        
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </PossiblyUnusedMethod>
 
         <UnusedConstructor errorLevel="suppress"/>
     </issueHandlers>

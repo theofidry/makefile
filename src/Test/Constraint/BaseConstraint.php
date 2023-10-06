@@ -45,10 +45,7 @@ abstract class BaseConstraint extends Constraint
 {
     protected string $failureDescription;
 
-    /**
-     * @param mixed $other
-     */
-    final public function evaluate($other, string $description = '', bool $returnResult = false): ?bool
+    final public function evaluate(mixed $other, string $description = '', bool $returnResult = false): ?bool
     {
         unset($this->failureDescription);
         $success = false;
@@ -72,16 +69,14 @@ abstract class BaseConstraint extends Constraint
         return null;
     }
 
-    final protected function failureDescription($other): string
+    final protected function failureDescription(mixed $other): string
     {
         /** @psalm-suppress RedundantPropertyInitializationCheck */
         return $this->failureDescription ?? parent::failureDescription($other);
     }
 
     /**
-     * @param mixed $other
-     *
      * @throws MatchingFailure
      */
-    abstract public function checkOther($other, string $description): void;
+    abstract public function checkOther(mixed $other, string $description): void;
 }

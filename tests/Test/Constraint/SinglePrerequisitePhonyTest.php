@@ -38,18 +38,17 @@ namespace Fidry\Makefile\Tests\Test\Constraint;
 
 use Fidry\Makefile\Rule;
 use Fidry\Makefile\Test\Constraint\SinglePrerequisitePhony;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 /**
- * @covers \Fidry\Makefile\Test\Constraint\SinglePrerequisitePhony
- *
  * @internal
  */
+#[CoversClass(SinglePrerequisitePhony::class)]
 final class SinglePrerequisitePhonyTest extends ConstraintTestCase
 {
-    /**
-     * @dataProvider valueProvider
-     */
+    #[DataProvider('valueProvider')]
     public function test_it_tests_that_a_rule_is_phony_and_has_one_and_only_one_pre_requisite(
         mixed $value,
         ?string $expectedExpectationFailureMessage

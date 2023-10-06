@@ -38,17 +38,17 @@ namespace Fidry\Makefile\Tests;
 
 use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Fidry\Makefile\Parser
  * @internal
  */
+#[CoversClass(Parser::class)]
 final class ParserTest extends TestCase
 {
-    /**
-     * @dataProvider makefileContentProvider
-     */
+    #[DataProvider('makefileContentProvider')]
     public function test_it_can_parse_makefiles(string $content, array $expected): void
     {
         $actual = Parser::parse($content);

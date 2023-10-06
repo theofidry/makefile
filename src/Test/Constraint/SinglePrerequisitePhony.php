@@ -48,7 +48,7 @@ final class SinglePrerequisitePhony extends BaseConstraint
         return 'is a .PHONY rule with one and only one pre-requisite';
     }
 
-    public function checkOther($other, string $description): void
+    public function checkOther(mixed $other, string $description): void
     {
         self::checkIsRuleInstance($other);
         self::checkIsPhonyRule($other);
@@ -57,6 +57,7 @@ final class SinglePrerequisitePhony extends BaseConstraint
 
     /**
      * @psalm-assert Rule $other
+     *
      * @throws MatchingFailure
      */
     private static function checkIsRuleInstance(mixed $other): void

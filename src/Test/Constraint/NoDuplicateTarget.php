@@ -49,7 +49,7 @@ final class NoDuplicateTarget extends BaseConstraint
         return 'is not declared twice';
     }
 
-    public function checkOther($other, string $description): void
+    public function checkOther(mixed $other, string $description): void
     {
         self::checkIsArrayOfRules($other);
         self::checkDuplicates($other);
@@ -57,6 +57,7 @@ final class NoDuplicateTarget extends BaseConstraint
 
     /**
      * @psalm-assert Rule[] $other
+     *
      * @throws MatchingFailure
      */
     private static function checkIsArrayOfRules(mixed $other): void

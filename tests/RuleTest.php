@@ -37,13 +37,14 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Tests;
 
 use Fidry\Makefile\Rule;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Fidry\Makefile\Rule
- *
  * @internal
  */
+#[CoversClass(Rule::class)]
 final class RuleTest extends TestCase
 {
     public function test_it_can_be_instantiated(): void
@@ -81,9 +82,7 @@ final class RuleTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider phonyTargetProvider
-     */
+    #[DataProvider('phonyTargetProvider')]
     public function test_it_can_detect_if_a_target_is_phony(Rule $rule, bool $expected): void
     {
         self::assertSame($expected, $rule->isPhony());
@@ -117,9 +116,7 @@ final class RuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider makefileCommentProvider
-     */
+    #[DataProvider('makefileCommentProvider')]
     public function test_it_can_detect_the_rule_is_a_target_with_a_makefile_comment(
         Rule $rule,
         bool $expected
@@ -165,9 +162,7 @@ final class RuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider commandCommentProvider
-     */
+    #[DataProvider('commandCommentProvider')]
     public function test_it_can_detect_the_rule_is_a_target_with_a_command_comment(
         Rule $rule,
         bool $expected
@@ -213,9 +208,7 @@ final class RuleTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider regularRuleProvider
-     */
+    #[DataProvider('regularRuleProvider')]
     public function test_it_can_detect_the_rule_is_a_regular_rule(
         Rule $rule,
         bool $expected
@@ -268,9 +261,7 @@ final class RuleTest extends TestCase
         self::assertTrue($rule->isPhony());
     }
 
-    /**
-     * @dataProvider ruleToStringProvider
-     */
+    #[DataProvider('ruleToStringProvider')]
     public function test_it_can_be_casted_into_a_string(
         Rule $rule,
         string $expected
