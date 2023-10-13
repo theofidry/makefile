@@ -47,6 +47,7 @@ use function ltrim;
 use function rtrim;
 use function Safe\preg_match;
 use function str_contains;
+use function str_ends_with;
 use function str_starts_with;
 use function trim;
 use const PHP_EOL;
@@ -88,12 +89,12 @@ final class Parser
     ): array {
         $line = rtrim($line);
 
-        if (!self::isRule($line)) {
+        if (!self::isRule($line, $multiline)) {
             return $parsedRules;
         }
 
         $previousMultiline = $multiline;
-        $multiline = '\\' === mb_substr($line, -1);
+        $multiline = str_ends_with($line, '\\');
 
         if (false === $previousMultiline) {
             $targetParts = explode(':', $line);
@@ -122,11 +123,15 @@ final class Parser
         return $parsedRules;
     }
 
-    private static function isRule(string $line): bool
+    private static function isRule(string $line, bool $previousMultiline): bool
     {
-        return !str_starts_with($line, '#')
-            && !str_starts_with($line, "\t")
-            && 0 === preg_match('/\S+=.+/', $line);
+        return (!str_starts_with($line, '#')
+                && !str_starts_with($line, "\t")
+                && 0 === preg_match('/\S+=.+/', $line)
+        )
+            || (
+                $previousMultiline && (str_starts_with($line, "\t") || str_starts_with($line, ' '))
+            );
     }
 
     /**
@@ -152,10 +157,12 @@ final class Parser
             $ignoreNextLinesOfMultiline = true;
         }
 
+        $charactersToTrim = $multiline ? '\\'."\t" : "\t";
+
         return array_values(
             array_filter(
                 array_map(
-                    static fn (string $dependency) => $multiline ? ltrim($dependency, '\\') : $dependency,
+                    static fn (string $dependency) => ltrim($dependency, $charactersToTrim),
                     explode(' ', $dependencies),
                 ),
             ),

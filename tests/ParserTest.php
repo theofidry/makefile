@@ -39,6 +39,7 @@ namespace Fidry\Makefile\Tests;
 use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
+use function str_replace;
 
 /**
  * @covers \Fidry\Makefile\Parser
@@ -176,6 +177,44 @@ final class ParserTest extends TestCase
                 new Rule('command1', ['foo', 'bar']),
                 new Rule('.PHONY', ['command2']),
                 new Rule('command1', ['foo']),
+            ],
+        ];
+
+        yield 'PHP-Scoper multiline pre-requisite' => [
+            <<<'MAKEFILE'
+                include .makefile/e2e.file
+                .PHONY: e2e
+                e2e: ## Runs end-to-end tests
+                e2e: e2e_004 \
+                        e2e_036 \
+                        e2e_037
+
+                MAKEFILE,
+            [
+                new Rule('.PHONY', ['e2e']),
+                new Rule('e2e', ['## Runs end-to-end tests']),
+                new Rule('e2e', ['e2e_004', 'e2e_036', 'e2e_037']),
+            ],
+        ];
+
+        yield 'multiline pre-requisite with tabs' => [
+            str_replace(
+                '        ',
+                "\t\t",
+                <<<'MAKEFILE'
+                    include .makefile/e2e.file
+                    .PHONY: e2e
+                    e2e: ## Runs end-to-end tests
+                    e2e: e2e_004 \
+                            e2e_036 \
+                            e2e_037
+
+                    MAKEFILE,
+            ),
+            [
+                new Rule('.PHONY', ['e2e']),
+                new Rule('e2e', ['## Runs end-to-end tests']),
+                new Rule('e2e', ['e2e_004', 'e2e_036', 'e2e_037']),
             ],
         ];
 
