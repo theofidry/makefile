@@ -23,6 +23,13 @@
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getNonDebugMakeFlags"
             ]
         },
+        "Concat": {
+            "ignoreSourceCodeByRegex": [
+                // This transformation is useless here. Also note that it is probably not a "contact" but a string
+                // permutation.
+                ".+\\$charactersToTrim = \\$multiline \\?.+",
+            ]
+        },
         "FunctionCallRemoval": {
             "ignore": [
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeCommand",
