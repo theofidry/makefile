@@ -54,7 +54,7 @@ final class ThrowableToStringMapper
             }
 
             /** @psalm-suppress UndefinedClass */
-            if ($throwable instanceof PhptAssertionFailedError) {
+            if ($throwable instanceof PHPTAssertionFailedError) {
                 /** @psalm-suppress UndefinedMethod */
                 $buffer .= $throwable->diff();
             }

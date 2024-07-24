@@ -49,11 +49,13 @@ use function Safe\preg_match;
 use function str_contains;
 use function str_ends_with;
 use function str_starts_with;
-use function trim;
 use const PHP_EOL;
 
 final class Parser
 {
+    private const COMMENT_LINE = '/(?<nonCommentPart>.*?)(?<commentPart>#.*)/';
+    private const MULTILINE_DELIMITER = '\\';
+
     /**
      * @return list<Rule>
      */
@@ -95,7 +97,7 @@ final class Parser
         }
 
         $previousMultiline = $multiline;
-        $multiline = str_ends_with($line, '\\');
+        $multiline = self::isMultiline($line);
 
         if (false === $previousMultiline) {
             $targetParts = explode(':', $line);
@@ -143,12 +145,33 @@ final class Parser
         bool $multiline,
         bool &$ignoreNextLinesOfMultiline
     ): array {
-        if ($ignoreNextLinesOfMultiline && $multiline) {
+        if (($ignoreNextLinesOfMultiline && $multiline)
+            || '' === $dependencies
+        ) {
             return [];
         }
 
-        if (str_contains($dependencies, '##')) {
-            return [trim($dependencies)];
+        if ($multiline) {
+            $dependenciesParts = explode(self::MULTILINE_DELIMITER, $dependencies);
+
+            return [
+                ...self::parsePrerequisites($dependenciesParts[0], false, $ignoreNextLinesOfMultiline),
+                // There cannot be more parts by design
+                ...self::parsePrerequisites($dependenciesParts[1] ?? '', false, $ignoreNextLinesOfMultiline),
+            ];
+        }
+
+        if (str_starts_with($dependencies, '#')) {
+            return [$dependencies];
+        }
+
+        if (str_contains($dependencies, '#')) {
+            [$nonCommentPart, $commentPart] = self::splitComment($dependencies);
+
+            return [
+                ...self::parsePrerequisites($nonCommentPart, false, $ignoreNextLinesOfMultiline),
+                ...self::parsePrerequisites($commentPart, false, $ignoreNextLinesOfMultiline),
+            ];
         }
 
         $semicolonPosition = mb_strpos($dependencies, ';');
@@ -158,15 +181,40 @@ final class Parser
             $ignoreNextLinesOfMultiline = true;
         }
 
-        $charactersToTrim = $multiline ? '\\'."\t" : "\t";
-
         return array_values(
             array_filter(
                 array_map(
-                    static fn (string $dependency) => ltrim($dependency, $charactersToTrim),
+                    static fn (string $dependency) => ltrim($dependency, "\t"),
                     explode(' ', $dependencies),
                 ),
             ),
         );
+    }
+
+    private static function isMultiline(string $line): bool
+    {
+        $lineWithoutComment = rtrim(self::trimComment($line));
+
+        return str_ends_with($lineWithoutComment, self::MULTILINE_DELIMITER);
+    }
+
+    private static function trimComment(string $line): string
+    {
+        return self::splitComment($line)[0];
+    }
+
+    /**
+     * @psalm-suppress LessSpecificReturnStatement,MoreSpecificReturnType,PossiblyNullArrayAccess,PossiblyUndefinedStringArrayOffset
+     *
+     * @return array{string, string}
+     */
+    private static function splitComment(string $line): array
+    {
+        return preg_match(self::COMMENT_LINE, $line, $matches)
+            ? [
+                $matches['nonCommentPart'],
+                $matches['commentPart'],
+            ]
+            : [$line, ''];
     }
 }
