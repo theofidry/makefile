@@ -49,7 +49,6 @@ use function Safe\preg_match;
 use function str_contains;
 use function str_ends_with;
 use function str_starts_with;
-use function trim;
 use const PHP_EOL;
 
 final class Parser
@@ -146,28 +145,27 @@ final class Parser
         bool $multiline,
         bool &$ignoreNextLinesOfMultiline
     ): array {
-        $trimmedDependencies = trim($dependencies);
-
         if (($ignoreNextLinesOfMultiline && $multiline)
-            || '' === $trimmedDependencies
+            || '' === $dependencies
         ) {
             return [];
         }
 
         if ($multiline) {
-            $dependenciesParts = explode(self::MULTILINE_DELIMITER, $dependencies, 2);
+            $dependenciesParts = explode(self::MULTILINE_DELIMITER, $dependencies);
 
             return [
                 ...self::parsePrerequisites($dependenciesParts[0], false, $ignoreNextLinesOfMultiline),
+                // There cannot be more parts by design
                 ...self::parsePrerequisites($dependenciesParts[1] ?? '', false, $ignoreNextLinesOfMultiline),
             ];
         }
 
-        if (str_starts_with($trimmedDependencies, '#')) {
-            return [$trimmedDependencies];
+        if (str_starts_with($dependencies, '#')) {
+            return [$dependencies];
         }
 
-        if (str_contains($trimmedDependencies, '#')) {
+        if (str_contains($dependencies, '#')) {
             [$nonCommentPart, $commentPart] = self::splitComment($dependencies);
 
             return [

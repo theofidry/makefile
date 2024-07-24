@@ -339,6 +339,13 @@ final class ParserTest extends TestCase
             ],
         ];
 
+        yield 'target with regular comment with trailing space' => [
+            'check: # comment ',
+            [
+                new Rule('check', ['# comment']),
+            ],
+        ];
+
         yield 'target with "command" comment' => [
             <<<'MAKEFILE'
                 check: ## comment
@@ -353,7 +360,7 @@ final class ParserTest extends TestCase
                 check: \ # Comment A
                     pre_req0 \ # Comment B 
                     pre_req1 \ # Comment C # Command C bis
-                    pre_req2 # Comment D 
+                    pre_req2 # Comment D with multiline \ in comment
                 # Comment E 
                 MAKEFILE,
             [
@@ -366,7 +373,7 @@ final class ParserTest extends TestCase
                         'pre_req1',
                         '# Comment C # Command C bis',
                         'pre_req2',
-                        '# Comment D',
+                        '# Comment D with multiline \ in comment',
                     ],
                 ),
             ],
@@ -377,7 +384,7 @@ final class ParserTest extends TestCase
                 check: \ ## Comment A
                     pre_req0 \ ## Comment B 
                     pre_req1 \ ## Comment C ## Command C bis
-                    pre_req2 ## Comment D 
+                    pre_req2 ## Comment D with multiline \ in comment
                 ## Comment E 
                 MAKEFILE,
             [
@@ -390,7 +397,7 @@ final class ParserTest extends TestCase
                         'pre_req1',
                         '## Comment C ## Command C bis',
                         'pre_req2',
-                        '## Comment D',
+                        '## Comment D with multiline \ in comment',
                     ],
                 ),
             ],
