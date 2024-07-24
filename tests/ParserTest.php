@@ -295,6 +295,20 @@ final class ParserTest extends TestCase
             [],
         ];
 
+        yield 'regular comment' => [
+            <<<'MAKEFILE'
+                # comment
+                MAKEFILE,
+            [],
+        ];
+
+        yield '"command" comment' => [
+            <<<'MAKEFILE'
+                ## comment
+                MAKEFILE,
+            [],
+        ];
+
         yield 'variable & comment with command' => [
             <<<'MAKEFILE'
                 FLOCK := flock
@@ -313,6 +327,72 @@ final class ParserTest extends TestCase
                 MAKEFILE,
             [
                 new Rule('.PHONY', []),
+            ],
+        ];
+
+        yield 'target with regular comment' => [
+            <<<'MAKEFILE'
+                check: # comment
+                MAKEFILE,
+            [
+                new Rule('check', ['# comment']),
+            ],
+        ];
+
+        yield 'target with "command" comment' => [
+            <<<'MAKEFILE'
+                check: ## comment
+                MAKEFILE,
+            [
+                new Rule('check', ['## comment']),
+            ],
+        ];
+
+        yield 'multiline target with regular comments' => [
+            <<<'MAKEFILE'
+                check: \ # Comment A
+                    pre_req0 \ # Comment B 
+                    pre_req1 \ # Comment C # Command C bis
+                    pre_req2 # Comment D 
+                # Comment E 
+                MAKEFILE,
+            [
+                new Rule(
+                    'check',
+                    [
+                        '# Comment A',
+                        'pre_req0',
+                        '# Comment B',
+                        'pre_req1',
+                        '# Comment C # Command C bis',
+                        'pre_req2',
+                        '# Comment D',
+                    ],
+                ),
+            ],
+        ];
+
+        yield 'multiline target with command comments' => [
+            <<<'MAKEFILE'
+                check: \ ## Comment A
+                    pre_req0 \ ## Comment B 
+                    pre_req1 \ ## Comment C ## Command C bis
+                    pre_req2 ## Comment D 
+                ## Comment E 
+                MAKEFILE,
+            [
+                new Rule(
+                    'check',
+                    [
+                        '## Comment A',
+                        'pre_req0',
+                        '## Comment B',
+                        'pre_req1',
+                        '## Comment C ## Command C bis',
+                        'pre_req2',
+                        '## Comment D',
+                    ],
+                ),
             ],
         ];
 
