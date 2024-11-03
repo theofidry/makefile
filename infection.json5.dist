@@ -30,6 +30,11 @@
                 ".+\\$charactersToTrim = \\$multiline \\?.+",
             ]
         },
+        "FalseValue": {
+            "ignore": [
+                "Fidry\\Makefile\\Parser::parsePrerequisites"
+            ]
+        },
         "FunctionCallRemoval": {
             "ignore": [
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeCommand",
@@ -47,6 +52,11 @@
             ]
         },
         "PublicVisibility": false,
+        "SpreadOneItem": {
+            "ignore": [
+                "Fidry\\Makefile\\Parser::parsePrerequisites"
+            ]
+        },
         "UnwrapArrayValues": {
             "ignore": [
                 "Fidry\\Makefile\\Parser::parseLine"
