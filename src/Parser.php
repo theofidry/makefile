@@ -128,13 +128,11 @@ final class Parser
 
     private static function isRule(string $line, bool $previousMultiline): bool
     {
-        return (!str_starts_with($line, '#')
-                && !str_starts_with($line, "\t")
-                && 0 === preg_match('/\S+=.+/', $line)
-        )
-            || (
-                $previousMultiline && (str_starts_with($line, "\t") || str_starts_with($line, ' '))
-            );
+        return (
+            !str_starts_with($line, '#')
+            && !str_starts_with($line, "\t")
+            && 0 === preg_match('/\S+=.+/', $line)
+        ) || $previousMultiline;
     }
 
     /**
