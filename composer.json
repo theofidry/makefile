@@ -20,7 +20,7 @@
         "bamarni/composer-bin-plugin": "^1.4",
         "ergebnis/composer-normalize": "^2.28",
         "infection/infection": "^0.29",
-        "phpunit/phpunit": "^10.3"
+        "phpunit/phpunit": "^10.3 || ^11.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
