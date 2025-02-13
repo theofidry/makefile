@@ -17,6 +17,8 @@ jobs:
             fail-fast: true
             matrix:
                 php:
+                    # Should be the lowest supported PHP version.
+                    # To also adjust the PHP version in the `vendor-bin/php-cs-fixer/composer.json` file.
                     - "8.1"
 
         steps:
