@@ -222,7 +222,7 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         $result = shell_exec($command);
 
-        if (null === $result) {
+        if (null === $result || false === $result) {
             throw new RuntimeException(
                 sprintf(
                     'Could not execute the command "%s".',
