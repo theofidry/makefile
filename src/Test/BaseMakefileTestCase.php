@@ -39,16 +39,17 @@ namespace Fidry\Makefile\Test;
 use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Safe\Exceptions\ExecException;
 use function array_filter;
+use function chdir;
 use function dirname;
 use function explode;
+use function file_get_contents;
+use function getcwd;
 use function getenv;
 use function implode;
-use function Safe\chdir;
-use function Safe\file_get_contents;
-use function Safe\getcwd;
-use function Safe\shell_exec;
+use function shell_exec;
 use function sprintf;
 
 abstract class BaseMakefileTestCase extends TestCase
@@ -80,7 +81,7 @@ abstract class BaseMakefileTestCase extends TestCase
     {
         if (!isset(static::$parsedRules)) {
             static::$parsedRules = Parser::parse(
-                file_get_contents(static::getMakefilePath()),
+                self::safeFileGetContents(static::getMakefilePath()),
             );
         }
 
@@ -127,9 +128,6 @@ abstract class BaseMakefileTestCase extends TestCase
         );
     }
 
-    /**
-     * @throws ExecException
-     */
     final protected static function executeCommand(string $command): string
     {
         $command = sprintf(
@@ -138,7 +136,7 @@ abstract class BaseMakefileTestCase extends TestCase
             $command,
         );
 
-        return shell_exec($command);
+        return self::safeShellExec($command);
     }
 
     final protected static function getNonDebugMakeFlags(): string
@@ -169,13 +167,70 @@ abstract class BaseMakefileTestCase extends TestCase
      */
     private static function executeInDirectory(string $directory, callable $execute): string
     {
-        $currentWorkingDirectory = getcwd();
-        chdir($directory);
+        $currentWorkingDirectory = self::safeGetCurrentWorkingDirectory();
+        self::safeChdir($directory);
 
         try {
             return $execute();
         } finally {
-            chdir($currentWorkingDirectory);
+            self::safeChdir($currentWorkingDirectory);
         }
+    }
+
+    private static function safeChdir(string $directory): void
+    {
+        $chdirResult = chdir($directory);
+
+        if (!$chdirResult) {
+            throw new RuntimeException(
+                sprintf(
+                    'Could not change the current working directory to "%s".',
+                    $directory,
+                ),
+            );
+        }
+    }
+
+    private static function safeGetCurrentWorkingDirectory(): string
+    {
+        $result = getcwd();
+
+        if (false === $result) {
+            throw new RuntimeException('Could not get the current working directory.');
+        }
+
+        return $result;
+    }
+
+    private static function safeFileGetContents(string $filename): string
+    {
+        $result = file_get_contents($filename);
+
+        if (false === $result) {
+            throw new RuntimeException(
+                sprintf(
+                    'Could not read the contents of the file "%s".',
+                    $filename,
+                ),
+            );
+        }
+
+        return $result;
+    }
+
+    private static function safeShellExec(string $command): string
+    {
+        $result = shell_exec($command);
+
+        if (null === $result) {
+            throw new RuntimeException(
+                sprintf(
+                    'Could not execute the command "%s".',
+                    $command,
+                ),
+            );
+        }
+
+        return $result;
     }
 }
