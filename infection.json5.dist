@@ -32,7 +32,9 @@
         },
         "FalseValue": {
             "ignore": [
-                "Fidry\\Makefile\\Parser::parsePrerequisites"
+                "Fidry\\Makefile\\Parser::parsePrerequisites",
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::safeGetCurrentWorkingDirectory",
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::safeShellExec"
             ]
         },
         "FunctionCallRemoval": {
@@ -48,6 +50,7 @@
         },
         "MethodCallRemoval": {
             "ignore": [
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::executeInDirectory",
                 "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getTimeout"
             ]
         },
