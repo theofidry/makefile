@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "thecodingmachine/safe": "^2.0"
+        "thecodingmachine/safe": "^2.0 || ^3.0"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
