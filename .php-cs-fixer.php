@@ -11,6 +11,7 @@
 
 use Fidry\PhpCsFixerConfig\FidryConfig;
 use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 $finder = Finder::create()
     ->in(__DIR__)
@@ -32,5 +33,6 @@ $config->setCacheFile(__DIR__.'/dist/.php-cs-fixer.cache');
 $config->addRules([
     'no_trailing_whitespace_in_string' => false,
 ]);
+$config->setParallelConfig(ParallelConfigFactory::detect());
 
 return $config->setFinder($finder);
