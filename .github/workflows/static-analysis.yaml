@@ -17,6 +17,7 @@ jobs:
             fail-fast: true
             matrix:
                 php:
+                    # Should be the highest supported PHP version.
                     - "8.2"
 
         steps:
