@@ -18,7 +18,9 @@ jobs:
             matrix:
                 php:
                     # Should be the lowest supported PHP version.
-                    # To also adjust the PHP version in the `vendor-bin/php-cs-fixer/composer.json` file.
+                    # To also adjust the PHP version in the following files:
+                    # - vendor-bin/php-cs-fixer/composer.json
+                    # - vendor-bin/rector/composer.json
                     - "8.1"
 
         steps:
