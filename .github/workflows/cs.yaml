@@ -21,7 +21,7 @@ jobs:
                     # To also adjust the PHP version in the following files:
                     # - vendor-bin/php-cs-fixer/composer.json
                     # - vendor-bin/rector/composer.json
-                    - "8.1"
+                    - "8.3"
 
         steps:
             -   name: "Check out repository code"

@@ -4,6 +4,6 @@
         "fidry/php-cs-fixer-config": "^1.0"
     },
     "platform": {
-        "php": "8.1"
+        "php": "8.3"
     }
 }
