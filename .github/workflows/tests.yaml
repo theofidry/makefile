@@ -22,9 +22,9 @@ jobs:
                     - "8.3"
                     - "8.4"
                 debug: [false]
-            include:
-                - php: "8.1"
-                  debug: true
+                include:
+                    - php: "8.1"
+                      debug: true
 
         steps:
             -   name: "Check out repository code"
