@@ -38,7 +38,6 @@ namespace Fidry\Makefile;
 
 use function current;
 use function implode;
-use function rtrim;
 use function sprintf;
 use function str_starts_with;
 
@@ -124,7 +123,7 @@ final class Rule
 
     public function toString(): string
     {
-        return rtrim(
+        return mb_rtrim(
             sprintf(
                 '%s: %s',
                 $this->target,

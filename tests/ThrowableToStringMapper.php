@@ -60,7 +60,7 @@ final class ThrowableToStringMapper
             }
 
             if (!empty($buffer)) {
-                $buffer = trim($buffer)."\n";
+                $buffer = mb_trim($buffer)."\n";
             }
 
             return $buffer;
