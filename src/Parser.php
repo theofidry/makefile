@@ -45,8 +45,6 @@ use function array_values;
 use function count;
 use function error_clear_last;
 use function explode;
-use function ltrim;
-use function rtrim;
 use function str_contains;
 use function str_ends_with;
 use function str_starts_with;
@@ -91,7 +89,7 @@ final class Parser
         bool &$ignoreNextLinesOfMultiline,
     ): array {
         $parsedRules = array_values($parsedRules);
-        $line = rtrim($line);
+        $line = mb_rtrim($line);
 
         if (!self::isRule($line, $multiline)) {
             return $parsedRules;
@@ -110,7 +108,7 @@ final class Parser
             [$target, $prerequisites] = $targetParts;
 
             $rule = new Rule(
-                rtrim($target),
+                mb_rtrim($target),
                 self::parsePrerequisites($prerequisites, $multiline, $ignoreNextLinesOfMultiline),
             );
         } else {
@@ -183,7 +181,7 @@ final class Parser
         return array_values(
             array_filter(
                 array_map(
-                    static fn (string $dependency) => ltrim($dependency, "\t"),
+                    static fn (string $dependency) => mb_ltrim($dependency, "\t"),
                     explode(' ', $dependencies),
                 ),
             ),
@@ -192,7 +190,7 @@ final class Parser
 
     private static function isMultiline(string $line): bool
     {
-        $lineWithoutComment = rtrim(self::trimComment($line));
+        $lineWithoutComment = mb_rtrim(self::trimComment($line));
 
         return str_ends_with($lineWithoutComment, self::MULTILINE_DELIMITER);
     }
@@ -203,7 +201,7 @@ final class Parser
     }
 
     /**
-     * @psalm-suppress LessSpecificReturnStatement,MoreSpecificReturnType,PossiblyNullArrayAccess,PossiblyUndefinedStringArrayOffset
+     * @psalm-suppress InvalidArrayAccess, PossiblyNullArrayAccess
      *
      * @return array{string, string}
      */
@@ -217,6 +215,9 @@ final class Parser
             : [$line, ''];
     }
 
+    /**
+     * @psalm-suppress ArgumentTypeCoercion
+     */
     private static function safePregMatch(string $pattern, string $subject, ?iterable &$matches = null, int $flags = 0, int $offset = 0): int
     {
         error_clear_last();

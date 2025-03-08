@@ -41,7 +41,6 @@ use PHPUnit\Framework\PHPTAssertionFailedError;
 use PHPUnit\Framework\SelfDescribing;
 use Throwable;
 use function sprintf;
-use function trim;
 
 final class ThrowableToStringMapper
 {
@@ -61,7 +60,7 @@ final class ThrowableToStringMapper
             }
 
             if (!empty($buffer)) {
-                $buffer = trim($buffer)."\n";
+                $buffer = mb_trim($buffer)."\n";
             }
 
             return $buffer;
