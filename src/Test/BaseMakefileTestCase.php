@@ -40,7 +40,6 @@ use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Safe\Exceptions\ExecException;
 use function array_filter;
 use function chdir;
 use function dirname;
@@ -157,7 +156,7 @@ abstract class BaseMakefileTestCase extends TestCase
             self::executeCommand('command -v timeout');
 
             return 'timeout 2s';
-        } catch (ExecException) {
+        } catch (RuntimeException) {
             return '';
         }
     }

@@ -36,16 +36,17 @@ declare(strict_types=1);
 
 namespace Fidry\Makefile;
 
+use RuntimeException;
 use function array_filter;
 use function array_map;
 use function array_pop;
 use function array_reduce;
 use function array_values;
 use function count;
+use function error_clear_last;
 use function explode;
 use function ltrim;
 use function rtrim;
-use function Safe\preg_match;
 use function str_contains;
 use function str_ends_with;
 use function str_starts_with;
@@ -87,7 +88,7 @@ final class Parser
         array $parsedRules,
         string $line,
         bool &$multiline,
-        bool &$ignoreNextLinesOfMultiline
+        bool &$ignoreNextLinesOfMultiline,
     ): array {
         $parsedRules = array_values($parsedRules);
         $line = rtrim($line);
@@ -131,7 +132,7 @@ final class Parser
         return (
             !str_starts_with($line, '#')
             && !str_starts_with($line, "\t")
-            && 0 === preg_match('/\S+=.+/', $line)
+            && 0 === self::safePregMatch('/\S+=.+/', $line)
         ) || $previousMultiline;
     }
 
@@ -141,7 +142,7 @@ final class Parser
     private static function parsePrerequisites(
         string $dependencies,
         bool $multiline,
-        bool &$ignoreNextLinesOfMultiline
+        bool &$ignoreNextLinesOfMultiline,
     ): array {
         if (($ignoreNextLinesOfMultiline && $multiline)
             || '' === $dependencies
@@ -208,11 +209,28 @@ final class Parser
      */
     private static function splitComment(string $line): array
     {
-        return preg_match(self::COMMENT_LINE, $line, $matches)
+        return self::safePregMatch(self::COMMENT_LINE, $line, $matches)
             ? [
                 $matches['nonCommentPart'],
                 $matches['commentPart'],
             ]
             : [$line, ''];
+    }
+
+    private static function safePregMatch(string $pattern, string $subject, ?iterable &$matches = null, int $flags = 0, int $offset = 0): int
+    {
+        error_clear_last();
+        $safeResult = preg_match($pattern, $subject, $matches, $flags, $offset);
+        if (false === $safeResult) {
+            throw new RuntimeException(
+                sprintf(
+                    'An error occurred while executing the regular expression "%s" on subject "%s".',
+                    $pattern,
+                    $subject,
+                ),
+            );
+        }
+
+        return $safeResult;
     }
 }

@@ -41,6 +41,7 @@ use PHPUnit\Framework\PHPTAssertionFailedError;
 use PHPUnit\Framework\SelfDescribing;
 use Throwable;
 use function sprintf;
+use function trim;
 
 final class ThrowableToStringMapper
 {
