@@ -79,7 +79,7 @@ final class ValidCommandDeclaration extends BaseConstraint
         }
 
         foreach ($other as $index => $value) {
-            if (!($value instanceof Rule)) {
+            if (!$value instanceof Rule) {
                 throw new MatchingFailure(
                     sprintf(
                         'the value to be an array of "%s" instances. Got "%s" for the item of index "%s"',
