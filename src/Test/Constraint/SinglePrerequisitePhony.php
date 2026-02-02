@@ -65,7 +65,7 @@ final class SinglePrerequisitePhony extends BaseConstraint
      */
     private static function checkIsRuleInstance(mixed $other): void
     {
-        if (!($other instanceof Rule)) {
+        if (!$other instanceof Rule) {
             throw new MatchingFailure(
                 sprintf(
                     'the value to be a "%s" instance. Got "%s"',
