@@ -6,13 +6,13 @@ MAKEFLAGS += --no-builtin-rules
 COMPOSER = $(shell which composer)
 
 SRC_TESTS_FILES=$(shell find src/ tests/ -type f) phpunit.xml.dist
-COVERAGE_DIR = dist/coverage
+COVERAGE_DIR = var/coverage
 COVERAGE_XML = $(COVERAGE_DIR)/xml
 COVERAGE_HTML = $(COVERAGE_DIR)/html
 TARGET_MSI = 100
 
 INFECTION_BIN = vendor/bin/infection
-INFECTION = php -d zend.enable_gc=0 $(INFECTION_BIN) --skip-initial-tests --coverage=$(COVERAGE_DIR) --only-covered --show-mutations --min-msi=100 --min-covered-msi=100 --ansi
+INFECTION = php -d zend.enable_gc=0 $(INFECTION_BIN) --skip-initial-tests --coverage=$(COVERAGE_DIR) --show-mutations --min-msi=100 --min-covered-msi=100 --ansi --threads=max
 
 PHPUNIT_BIN = vendor/bin/phpunit
 PHPUNIT = php -d zend.enable_gc=0 $(PHPUNIT_BIN)
@@ -72,7 +72,7 @@ php_cs_fixer: $(PHP_CS_FIXER_BIN)
 	$(PHP_CS_FIXER)
 
 .PHONY: php_cs_fixer_lint
-php_cs_fixer_lint: $(PHP_CS_FIXER_BIN) dist
+php_cs_fixer_lint: $(PHP_CS_FIXER_BIN) var
 	$(PHP_CS_FIXER)
 
 .PHONY: rector
@@ -82,7 +82,7 @@ ifndef SKIP_RECTOR
 endif
 
 .PHONY: rector_lint
-rector_lint: $(RECTOR_BIN) dist
+rector_lint: $(RECTOR_BIN) var
 ifndef SKIP_RECTOR
 	$(RECTOR) --dry-run
 endif
@@ -105,23 +105,23 @@ composer_validate: vendor
 
 .PHONY: phpunit
 phpunit:   ## Runs PHPUnit
-phpunit: $(PHPUNIT_BIN) dist vendor
+phpunit: $(PHPUNIT_BIN) var vendor
 	$(PHPUNIT)
 
 .PHONY: phpunit_coverage_infection
 phpunit_coverage_infection: ## Runs PHPUnit with code coverage for Infection
-phpunit_coverage_infection: $(PHPUNIT_BIN) dist vendor
+phpunit_coverage_infection: $(PHPUNIT_BIN) var vendor
 	$(PHPUNIT_COVERAGE_INFECTION)
 
 .PHONY: phpunit_coverage_html
 phpunit_coverage_html: ## Runs PHPUnit with code coverage with HTML report
-phpunit_coverage_html: $(PHPUNIT_BIN) dist vendor
+phpunit_coverage_html: $(PHPUNIT_BIN) var vendor
 	$(PHPUNIT_COVERAGE_HTML)
 	@echo "You can check the report by opening the file \"$(COVERAGE_HTML)/index.html\"."
 
 .PHONY: infection
 infection: ## Runs infection
-infection: $(INFECTION_BIN) $(COVERAGE_DIR) dist vendor
+infection: $(INFECTION_BIN) $(COVERAGE_DIR) var vendor
 	if [ -d $(COVERAGE_DIR)/coverage-xml ]; then $(INFECTION); fi
 
 
@@ -165,6 +165,6 @@ ifndef SKIP_RECTOR
 	touch -c $@
 endif
 
-dist:
-	mkdir -p dist
+var:
+	mkdir -p var
 	touch $@
