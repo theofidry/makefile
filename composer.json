@@ -18,7 +18,7 @@
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
         "ergebnis/composer-normalize": "^2.28",
-        "infection/infection": "^0.29",
+        "infection/infection": "^0.29 || ^0.32",
         "phpunit/phpunit": "^12.0"
     },
     "minimum-stability": "dev",
