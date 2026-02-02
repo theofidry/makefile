@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Test\Constraint;
 
 use Fidry\Makefile\Rule;
+use Override;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use function array_shift;
 use function count;
@@ -46,11 +47,13 @@ use function sprintf;
 
 final class ValidCommandDeclaration extends BaseConstraint
 {
+    #[Override]
     public function toString(): string
     {
         return 'is a Makefile "command" declaration';
     }
 
+    #[Override]
     public function checkOther(mixed $other, string $description): void
     {
         self::checkIsArrayOfRules($other);

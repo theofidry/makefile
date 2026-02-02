@@ -38,6 +38,7 @@ namespace Fidry\Makefile\Test;
 
 use Fidry\Makefile\Parser;
 use Fidry\Makefile\Rule;
+use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use function array_filter;
@@ -63,11 +64,13 @@ abstract class BaseMakefileTestCase extends TestCase
 
     abstract protected function getExpectedHelpOutput(): string;
 
+    #[Override]
     public static function setUpBeforeClass(): void
     {
         static::getParsedRules();
     }
 
+    #[Override]
     public static function tearDownAfterClass(): void
     {
         static::$parsedRules = null;

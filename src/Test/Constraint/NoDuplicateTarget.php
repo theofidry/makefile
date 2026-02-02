@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Test\Constraint;
 
 use Fidry\Makefile\Rule;
+use Override;
 use function array_key_exists;
 use function get_debug_type;
 use function is_array;
@@ -44,11 +45,13 @@ use function sprintf;
 
 final class NoDuplicateTarget extends BaseConstraint
 {
+    #[Override]
     public function toString(): string
     {
         return 'is not declared twice';
     }
 
+    #[Override]
     public function checkOther(mixed $other, string $description): void
     {
         self::checkIsArrayOfRules($other);

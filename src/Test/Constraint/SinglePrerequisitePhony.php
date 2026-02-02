@@ -37,17 +37,20 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Test\Constraint;
 
 use Fidry\Makefile\Rule;
+use Override;
 use function count;
 use function get_debug_type;
 use function sprintf;
 
 final class SinglePrerequisitePhony extends BaseConstraint
 {
+    #[Override]
     public function toString(): string
     {
         return 'is a .PHONY rule with one and only one pre-requisite';
     }
 
+    #[Override]
     public function checkOther(mixed $other, string $description): void
     {
         self::checkIsRuleInstance($other);

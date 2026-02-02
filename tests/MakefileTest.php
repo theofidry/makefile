@@ -37,6 +37,7 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Tests;
 
 use Fidry\Makefile\Test\BaseMakefileTestCase;
+use Override;
 use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
@@ -45,11 +46,13 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 #[CoversNothing]
 final class MakefileTest extends BaseMakefileTestCase
 {
+    #[Override]
     protected static function getMakefilePath(): string
     {
         return __DIR__.'/../Makefile';
     }
 
+    #[Override]
     protected function getExpectedHelpOutput(): string
     {
         return <<<'EOF'

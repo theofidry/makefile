@@ -37,17 +37,20 @@ declare(strict_types=1);
 namespace Fidry\Makefile\Tests\Feature;
 
 use Fidry\Makefile\Test\BaseMakefileTestCase;
+use Override;
 
 /**
  * @internal
  */
 final class WorkingDirectoryMakefileTest extends BaseMakefileTestCase
 {
+    #[Override]
     protected static function getMakefilePath(): string
     {
         return __DIR__.'/../Fixtures/Set000/Makefile';
     }
 
+    #[Override]
     protected function getExpectedHelpOutput(): string
     {
         return <<<'EOF'
