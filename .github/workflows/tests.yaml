@@ -26,16 +26,16 @@ jobs:
 
         steps:
             -   name: "Check out repository code"
-                uses: "actions/checkout@v4"
+                uses: "actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5" # v4.3.1
 
             -   name: "Setup PHP"
-                uses: "shivammathur/setup-php@v2"
+                uses: "shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1" # 2.36.0
                 with:
                     php-version: "${{ matrix.php }}"
                     tools: "composer"
 
             -   name: "Install Composer dependencies"
-                uses: "ramsey/composer-install@v2"
+                uses: "ramsey/composer-install@1919f6c305aea6ab10e6181a8ddf72317ad77e0e" # 2.3.1
 
             -   name: "Run tests"
                 if: ${{ !matrix.debug }}
@@ -56,17 +56,17 @@ jobs:
 
         steps:
             -   name: "Check out repository code"
-                uses: "actions/checkout@v4"
+                uses: "actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5" # v4.3.1
 
             -   name: "Setup PHP"
-                uses: "shivammathur/setup-php@v2"
+                uses: "shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1" # 2.36.0
                 with:
                     php-version: "${{ matrix.php }}"
                     tools: "composer"
                     coverage: "xdebug"
 
             -   name: "Install Composer dependencies"
-                uses: "ramsey/composer-install@v2"
+                uses: "ramsey/composer-install@1919f6c305aea6ab10e6181a8ddf72317ad77e0e" # 2.3.1
 
             -   name: "Run tests and mutation testing"
                 run: "make infection"
