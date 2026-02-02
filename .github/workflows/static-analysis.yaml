@@ -18,7 +18,7 @@ jobs:
             matrix:
                 php:
                     # Should be the highest supported PHP version.
-                    - "8.4"
+                    - "8.5"
 
         steps:
             -   name: "Check out repository code"

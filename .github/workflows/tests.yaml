@@ -19,6 +19,7 @@ jobs:
                 php:
                     - "8.3"
                     - "8.4"
+                    - "8.5"
                 debug: [false]
                 include:
                     - php: "8.3"
@@ -52,7 +53,8 @@ jobs:
             fail-fast: true
             matrix:
                 php:
-                    - "8.4"
+                    # Should be the highest supported PHP version.
+                    - "8.5"
 
         steps:
             -   name: "Check out repository code"
