@@ -17,6 +17,7 @@ $finder = Finder::create()
     ->in(__DIR__)
     ->exclude([
         'dist',
+        'var',
     ]);
 
 $header = trim(
@@ -34,5 +35,6 @@ $config->addRules([
     'no_trailing_whitespace_in_string' => false,
 ]);
 $config->setParallelConfig(ParallelConfigFactory::detect());
+$config->setCacheFile(__DIR__ . '/var/php-cs-fixer-cache');
 
 return $config->setFinder($finder);

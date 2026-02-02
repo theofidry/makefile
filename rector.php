@@ -43,6 +43,7 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__.'/src',
         __DIR__.'/tests',
     ]);
+    $rectorConfig->cacheDirectory(__DIR__.'/var/rector-cache');
 
     $rectorConfig->sets([
         LevelSetList::UP_TO_PHP_81,
