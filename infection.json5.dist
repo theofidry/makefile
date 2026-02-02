@@ -7,9 +7,9 @@
         ]
     },
     "logs": {
-        "text": "dist/infection.log"
+        "text": "var/infection.log"
     },
-    "tmpDir": "dist/infection",
+    "tmpDir": "var/infection-tmp",
     "mutators": {
         "@default": true,
         "MBString": false,

@@ -9,5 +9,6 @@
 /lsp/
 /tests/Integration/var/cache/
 /tests/Integration/var/logs/
+/var/
 /vendor-bin/*/vendor/
 /vendor/
