@@ -41,12 +41,6 @@
                 <file name="src/Test/Constraint/BaseConstraint.php"/>
             </errorLevel>
         </MissingConstructor>
-        
-        <PossiblyUnusedMethod>
-            <errorLevel type="suppress">
-                <directory name="tests"/>
-            </errorLevel>
-        </PossiblyUnusedMethod>
 
         <UnusedConstructor errorLevel="suppress"/>
     </issueHandlers>

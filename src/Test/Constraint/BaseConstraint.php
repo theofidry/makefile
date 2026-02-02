@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 namespace Fidry\Makefile\Test\Constraint;
 
+use Override;
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
@@ -45,6 +46,7 @@ abstract class BaseConstraint extends Constraint
 {
     protected string $failureDescription;
 
+    #[Override]
     final public function evaluate(mixed $other, string $description = '', bool $returnResult = false): ?bool
     {
         unset($this->failureDescription);
@@ -69,6 +71,7 @@ abstract class BaseConstraint extends Constraint
         return null;
     }
 
+    #[Override]
     final protected function failureDescription(mixed $other): string
     {
         /** @psalm-suppress RedundantPropertyInitializationCheck */
