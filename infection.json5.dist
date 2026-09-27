@@ -17,6 +17,11 @@
             "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getNonDebugMakeFlags"
         ],
 
+        "AssignCoalesce": {
+            "ignore": [
+                "Fidry\\Makefile\\Test\\BaseMakefileTestCase::getParsedRules"
+            ]
+        },
         "CastString": {
             "ignore": [
                 // Testing that getenv() does not return a string is difficult there.
