@@ -41,9 +41,9 @@ use function implode;
 use function sprintf;
 use function str_starts_with;
 
-final class Rule
+final readonly class Rule
 {
-    private const PHONY_TARGET = '.PHONY';
+    private const string PHONY_TARGET = '.PHONY';
 
     /**
      * @param list<string> $prerequisites
@@ -57,8 +57,8 @@ final class Rule
      * @param list<string> $prerequisites
      */
     public function __construct(
-        private readonly string $target,
-        private readonly array $prerequisites,
+        private string $target,
+        private array $prerequisites,
     ) {
     }
 

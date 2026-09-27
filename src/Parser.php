@@ -52,8 +52,8 @@ use const PHP_EOL;
 
 final class Parser
 {
-    private const COMMENT_LINE = '/(?<nonCommentPart>.*?)(?<commentPart>#.*)/';
-    private const MULTILINE_DELIMITER = '\\';
+    private const string COMMENT_LINE = '/(?<nonCommentPart>.*?)(?<commentPart>#.*)/';
+    private const string MULTILINE_DELIMITER = '\\';
 
     /**
      * @return list<Rule>

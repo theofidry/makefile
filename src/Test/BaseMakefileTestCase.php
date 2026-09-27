@@ -81,11 +81,9 @@ abstract class BaseMakefileTestCase extends TestCase
      */
     final protected static function getParsedRules(): array
     {
-        if (!isset(static::$parsedRules)) {
-            static::$parsedRules = Parser::parse(
-                self::safeFileGetContents(static::getMakefilePath()),
-            );
-        }
+        static::$parsedRules ??= Parser::parse(
+            self::safeFileGetContents(static::getMakefilePath()),
+        );
 
         return static::$parsedRules;
     }
